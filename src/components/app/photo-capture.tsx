@@ -11,9 +11,16 @@ interface PhotoCaptureProps {
   onChange: (photo: string | undefined) => void;
   label?: string;
   className?: string;
+  facingMode?: "user" | "environment";
 }
 
-export function PhotoCapture({ value, onChange, label = "Photo", className }: PhotoCaptureProps) {
+export function PhotoCapture({
+  value,
+  onChange,
+  label = "Photo",
+  className,
+  facingMode = "environment",
+}: PhotoCaptureProps) {
   const cameraInputRef = React.useRef<HTMLInputElement>(null);
   const uploadInputRef = React.useRef<HTMLInputElement>(null);
   const [busy, setBusy] = React.useState(false);
@@ -38,7 +45,7 @@ export function PhotoCapture({ value, onChange, label = "Photo", className }: Ph
         ref={cameraInputRef}
         type="file"
         accept="image/*"
-        capture="environment"
+        capture={facingMode}
         hidden
         onChange={(e) => handleFiles(e.target.files)}
       />

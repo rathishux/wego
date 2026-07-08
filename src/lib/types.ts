@@ -43,6 +43,12 @@ export interface Markers {
   mood: string;
 }
 
+export interface ProgressPhoto {
+  id: string;
+  createdAt: number;
+  photo: string;
+}
+
 export interface FeedItem {
   type: LogType;
   id: string;

@@ -1,17 +1,31 @@
+import { Trash2 } from "lucide-react";
 import * as React from "react";
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
 import { toast } from "sonner";
 
-import { PhotoCapture } from "@/components/app/photo-capture";
+import { PhotoCaptureButton } from "@/components/app/photo-capture-button";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from "@/components/ui/chart";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { FEED_TAG_LABEL, FEED_TAG_STYLE, buildFeed } from "@/lib/feed";
 import { useLocalList } from "@/hooks/use-local-list";
-import { KEYS, addDays, formatDate, loadValue, saveValue, sortByDateAsc, sortByDateDesc, todayISO } from "@/lib/storage";
-import type { DoseEntry, FoodEntry, GlucoseEntry, Markers, WeightEntry } from "@/lib/types";
+import {
+  KEYS,
+  addDays,
+  formatDate,
+  formatDateTime,
+  loadValue,
+  migrateLegacyFacePhoto,
+  saveValue,
+  sortByDateAsc,
+  sortByDateDesc,
+  todayISO,
+  uid,
+} from "@/lib/storage";
+import type { DoseEntry, FoodEntry, GlucoseEntry, Markers, ProgressPhoto, WeightEntry } from "@/lib/types";
 
 const chartConfig: ChartConfig = {
   weight: { label: "Weight (kg)", color: "var(--chart-2)" },
@@ -114,17 +128,7 @@ export function ProgressPage() {
 
       <ProgressMarkers giCount={giCount} />
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Progress photo</CardTitle>
-          <p className="text-muted-foreground text-sm">
-            Optional private selfie journaling — stored only on this device
-          </p>
-        </CardHeader>
-        <CardContent>
-          <FaceProgressPhoto />
-        </CardContent>
-      </Card>
+      <ProgressPhotoGallery />
 
       <Card>
         <CardHeader>
@@ -228,20 +232,54 @@ function ProgressMarkers({ giCount }: { giCount: number }) {
   );
 }
 
-function FaceProgressPhoto() {
-  const [photo, setPhoto] = React.useState<string | undefined>(() =>
-    loadValue<string | null>(KEYS.markers + ".face", null) ?? undefined,
-  );
+function ProgressPhotoGallery() {
+  React.useEffect(() => {
+    migrateLegacyFacePhoto();
+  }, []);
 
-  function handleChange(next: string | undefined) {
-    setPhoto(next);
-    if (next) {
-      if (saveValue(KEYS.markers + ".face", next)) toast.success("Photo saved.");
-    } else {
-      localStorage.removeItem(KEYS.markers + ".face");
-      toast("Photo cleared.");
-    }
+  const { list, add, remove } = useLocalList<ProgressPhoto>(KEYS.progressPhotos);
+  const photos = [...list].sort((a, b) => b.createdAt - a.createdAt);
+
+  function handleCapture(photo: string) {
+    add({ id: uid(), createdAt: Date.now(), photo });
+    toast.success("Photo added to your progress gallery.");
   }
 
-  return <PhotoCapture value={photo} onChange={handleChange} label="Progress selfie" />;
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Progress photos</CardTitle>
+        <p className="text-muted-foreground text-sm">
+          A private, timestamped record of how you're looking — stored only on this device
+        </p>
+      </CardHeader>
+      <CardContent className="flex flex-col gap-4">
+        <PhotoCaptureButton onCapture={handleCapture} facingMode="user" />
+
+        {photos.length === 0 ? (
+          <p className="text-muted-foreground text-sm">No progress photos yet.</p>
+        ) : (
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
+            {photos.map((p) => (
+              <div key={p.id} className="group relative overflow-hidden rounded-lg border">
+                <img src={p.photo} alt={formatDateTime(p.createdAt)} className="aspect-square w-full object-cover" />
+                <div className="absolute inset-x-0 bottom-0 bg-black/60 px-2 py-1">
+                  <p className="truncate text-[11px] font-medium text-white">{formatDateTime(p.createdAt)}</p>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  aria-label="Delete photo"
+                  onClick={() => remove(p.id)}
+                  className="absolute top-1 right-1 size-7 bg-black/50 text-white opacity-0 hover:bg-black/70 hover:text-white group-hover:opacity-100"
+                >
+                  <Trash2 className="size-3.5" />
+                </Button>
+              </div>
+            ))}
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
 }
