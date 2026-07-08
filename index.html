@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Steady — Health Tracker</title>
+  <meta name="description" content="Private Wegovy and prediabetes tracking app" />
+  <meta name="theme-color" content="#1f6f50" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="icons/icon.svg" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">Steady</p>
+        <h1 id="screenTitle">Today</h1>
+        <p id="screenSubtitle" class="subtitle">Calm snapshot for daily tracking.</p>
+      </div>
+      <span class="private-pill">Private</span>
+    </header>
+
+    <main id="app" class="screen"></main>
+
+    <nav class="tabbar" aria-label="Primary navigation">
+      <button class="tab active" data-tab="today"><span>⌂</span><small>Today</small></button>
+      <button class="tab" data-tab="logs"><span>＋</span><small>Logs</small></button>
+      <button class="tab" data-tab="progress"><span>◌</span><small>Progress</small></button>
+      <button class="tab" data-tab="tips"><span>?</span><small>Tips</small></button>
+    </nav>
+  </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <template id="today-template">
+    <section class="card accent-green dose-card">
+      <div class="card-header-row">
+        <div>
+          <h2>Next dose</h2>
+          <p>Estimated from your last recorded injection</p>
+        </div>
+        <strong id="dashboardDose">—</strong>
+      </div>
+      <div class="dose-date-row">
+        <strong id="nextDoseDate">Add first dose</strong>
+        <button class="primary small" data-action="go-dose">Log dose</button>
+      </div>
+    </section>
+
+    <section class="metric-grid">
+      <article class="card accent-blue metric-card">
+        <h2>Weight</h2>
+        <p>Since first log</p>
+        <div class="big-metric"><span id="latestWeight">—</span><small>kg</small></div>
+        <span id="weightDelta" class="metric-chip blue">No trend yet</span>
+      </article>
+      <article class="card accent-amber metric-card">
+        <h2>Glucose</h2>
+        <p>Latest fasting</p>
+        <div class="big-metric"><span id="latestGlucose">—</span><small>mg/dL</small></div>
+        <button class="chip-button" data-action="go-glucose">Add</button>
+      </article>
+    </section>
+
+    <section class="card feed-card">
+      <h2>Recent logs</h2>
+      <p>Latest activity across all trackers</p>
+      <div id="recentFeed" class="feed"></div>
+    </section>
+  </template>
+
+  <template id="logs-template">
+    <div class="segment-control" role="tablist">
+      <button class="segment active" data-log-tab="dose">Dose</button>
+      <button class="segment" data-log-tab="weight">Weight</button>
+      <button class="segment" data-log-tab="glucose">Glucose</button>
+      <button class="segment" data-log-tab="food">Food</button>
+    </div>
+    <section id="logPanel"></section>
+  </template>
+
+  <template id="progress-template">
+    <section class="card accent-blue trend-card">
+      <div class="card-header-row">
+        <div>
+          <h2>Weight trend</h2>
+          <p><span id="weightLogCount">0</span> logs • last 30 days</p>
+        </div>
+        <div class="trend-summary"><strong id="trendDelta">—</strong><small>Since first log</small></div>
+      </div>
+      <canvas id="weightChart" height="180" aria-label="Weight trend chart"></canvas>
+    </section>
+
+    <section class="card accent-green rhythm-card">
+      <h2>Weekly rhythm</h2>
+      <p>Logging consistency</p>
+      <div id="weekDots" class="week-dots"></div>
+    </section>
+
+    <section class="card accent-violet">
+      <h2>Progress markers</h2>
+      <p>Optional non-scale wins</p>
+      <div class="marker-grid">
+        <div><small>Waist</small><strong contenteditable="true" id="markerWaist" data-marker="waist">—</strong></div>
+        <div><small>Sleep</small><strong contenteditable="true" id="markerSleep" data-marker="sleep">—</strong></div>
+        <div><small>Mood</small><strong contenteditable="true" id="markerMood" data-marker="mood">—</strong></div>
+        <div><small>GI</small><strong id="giCount">0 logs</strong></div>
+      </div>
+    </section>
+  </template>
+
+  <template id="tips-template">
+    <section class="card accent-green"><h2>Helpful eating patterns</h2><p>Small meals, protein-first choices, fiber, vegetables, and water can support consistency.</p></section>
+    <section class="card accent-amber"><h2>Limit with care</h2><p>Large greasy meals, heavy alcohol, and skipping hydration may worsen nausea for some people.</p></section>
+    <section class="card accent-blue"><h2>Track beyond weight</h2><p>Sleep, mood, waist measurement, GI side effects, activity, and A1c/labs can add context for doctor visits.</p></section>
+    <section class="card accent-rose"><h2>Missed a dose?</h2><p>Ask your doctor or pharmacist how to handle a missed dose. This app does not provide dosing guidance.</p></section>
+    <section class="card accent-rose"><h2>Safety boundary</h2><p>This app records your data only. It does not diagnose, interpret values, or recommend dosage changes. Always defer to your prescribing doctor and dietitian.</p></section>
+    <section class="card accent-violet face-card">
+      <h2>Face progress</h2>
+      <p>Optional private selfie journaling with hydration, sleep, and confidence context.</p>
+      <div class="face-actions">
+        <label class="outline-action">Take / upload selfie<input id="facePhoto" type="file" accept="image/*" capture="user" hidden /></label>
+        <button class="outline-action" id="clearFacePhoto">Clear</button>
+      </div>
+      <img id="facePreview" class="photo-preview hidden" alt="Face progress preview" />
+    </section>
+  </template>
+
+  <script src="app.js"></script>
+</body>
+</html>
