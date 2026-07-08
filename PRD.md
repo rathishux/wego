@@ -118,4 +118,15 @@ One primary user profile for v1: an adult prediabetic patient prescribed Wegovy,
 
 - The product is being built **web-first** (desktop + mobile browser), using the **shadcn/ui** design system (React + Tailwind + Radix). A native mobile app wrapper is deferred to a later phase and is not part of this codebase.
 - Every log type (dose, weight, glucose, food) now supports an optional **take photo / upload photo** attachment, captured client-side and compressed before storage.
-- The **Progress** screen was expanded into a full chronological history of every log entry — including its photo and full details — in addition to the existing weight trend chart, weekly rhythm, and progress markers.
+- The **Progress** screen was expanded into a full chronological history of every log entry — including its photo and full details — plus a private, timestamped progress-photo gallery, in addition to the existing weight trend chart, weekly rhythm, and progress markers.
+
+## 13. v1.2 Addendum — Face Progress Community (public, opt-in)
+
+This is a deliberate, scoped exception to Section 3's "no social/sharing features" non-goal and Section 7's privacy posture — everything else in the product remains private and local-only.
+
+- **What it is:** an opt-in, anonymous public feed where users can share a photo of how their face is changing during treatment and see others', framed around solidarity rather than "before/after" comparison or competition. Explicitly not framed as a viral "challenge."
+- **Why an exception:** rapid weight loss on GLP-1 medications can visibly change the face ("Ozempic face" — gauntness, hollow cheeks, prominent jowls/wrinkles), which can be an isolating, hard-to-discuss side effect. Peer visibility was requested as a way to normalize it.
+- **Identity model:** pseudonymous, not anonymous in the strictest sense — a random pseudonym/avatar hides account identity, but the photo itself can still be facially recognizable. The consent flow says this explicitly rather than overpromising anonymity.
+- **Safety requirements (non-negotiable for this feature):** explicit one-time consent screen plus a per-post acknowledgment checkbox before anything is posted; report-and-auto-hide (a post is pulled from public view after 3 reports, pending manual review); users can delete their own posts at any time; no open-ended public comments in v1 (a single lightweight "support" reaction only), to limit the surface for mockery or harassment.
+- **Infrastructure:** requires a real backend (Supabase: Postgres + anonymous auth + storage) since, unlike the rest of the app, data must be shared across users. Falls back to a clearly labeled on-device "demo mode" when no backend is configured, so the feature degrades gracefully rather than breaking.
+- **Explicitly out of scope for v1:** in-app moderation/admin UI (reviewed via the Supabase dashboard directly for now), blur/crop tooling before posting, follows/DMs, and any leaderboard, streak, or contest mechanic.

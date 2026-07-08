@@ -97,6 +97,18 @@ export function formatDateTime(timestamp: number): string {
   });
 }
 
+export function formatRelativeTime(timestamp: number): string {
+  const diffMs = Date.now() - timestamp;
+  const minutes = Math.round(diffMs / 60000);
+  if (minutes < 1) return "just now";
+  if (minutes < 60) return `${minutes}m ago`;
+  const hours = Math.round(minutes / 60);
+  if (hours < 24) return `${hours}h ago`;
+  const days = Math.round(hours / 24);
+  if (days < 7) return `${days}d ago`;
+  return formatDate(new Date(timestamp).toISOString().slice(0, 10));
+}
+
 export function formatDateShort(isoDate: string): string {
   const d = new Date(isoDate + "T00:00:00");
   if (isNaN(d.getTime())) return isoDate;
