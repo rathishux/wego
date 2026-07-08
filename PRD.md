@@ -113,3 +113,9 @@ One primary user profile for v1: an adult prediabetic patient prescribed Wegovy,
 
 - Consistency: doses, weight, and glucose logged on the days they occur.
 - Usefulness at doctor visits: the dashboard/history is enough to answer "how has this month gone?" without digging through notes.
+
+## 12. v1.1 Addendum — Web-first rebuild
+
+- The product is being built **web-first** (desktop + mobile browser), using the **shadcn/ui** design system (React + Tailwind + Radix). A native mobile app wrapper is deferred to a later phase and is not part of this codebase.
+- Every log type (dose, weight, glucose, food) now supports an optional **take photo / upload photo** attachment, captured client-side and compressed before storage.
+- The **Progress** screen was expanded into a full chronological history of every log entry — including its photo and full details — in addition to the existing weight trend chart, weekly rhythm, and progress markers.
