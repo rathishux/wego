@@ -1,4 +1,4 @@
-import { Trash2 } from "lucide-react";
+import { Camera, Trash2 } from "lucide-react";
 import * as React from "react";
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
 import { toast } from "sonner";
@@ -142,8 +142,12 @@ export function ProgressPage() {
             <div className="flex flex-col gap-3">
               {feed.map((item) => (
                 <div key={`${item.type}-${item.id}`} className="flex items-start gap-3 rounded-lg border p-3">
-                  {item.photo && (
+                  {item.photo ? (
                     <img src={item.photo} alt="" className="size-16 shrink-0 rounded-md border object-cover" />
+                  ) : (
+                    <div className="bg-muted text-muted-foreground flex size-16 shrink-0 items-center justify-center rounded-md border">
+                      <Camera className="size-5" />
+                    </div>
                   )}
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center justify-between gap-2">
