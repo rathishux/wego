@@ -14,16 +14,16 @@ export function CommunityPage() {
   const [consentOpen, setConsentOpen] = React.useState(false);
   const [posts, setPosts] = React.useState<CommunityPost[]>([]);
   const [loading, setLoading] = React.useState(true);
-  const [loadError, setLoadError] = React.useState(false);
+  const [loadError, setLoadError] = React.useState<string | null>(null);
 
   const loadFeed = React.useCallback(async () => {
     setLoading(true);
-    setLoadError(false);
+    setLoadError(null);
     try {
       const feed = await communityBackend.listFeed();
       setPosts(feed);
-    } catch {
-      setLoadError(true);
+    } catch (err) {
+      setLoadError(err instanceof Error ? err.message : "Unknown error");
     } finally {
       setLoading(false);
     }
@@ -54,8 +54,8 @@ export function CommunityPage() {
     );
     try {
       await communityBackend.toggleReaction(id);
-    } catch {
-      toast.error("Couldn't save that reaction.");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Couldn't save that reaction.");
       loadFeed();
     }
   }
@@ -66,8 +66,8 @@ export function CommunityPage() {
     try {
       await communityBackend.deletePost(id);
       toast("Post deleted.");
-    } catch {
-      toast.error("Couldn't delete that post.");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Couldn't delete that post.");
       setPosts(prev);
     }
   }
@@ -76,8 +76,8 @@ export function CommunityPage() {
     try {
       await communityBackend.reportPost(id, reason);
       toast("Thanks — we'll review this post.");
-    } catch {
-      toast.error("Couldn't submit that report.");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Couldn't submit that report.");
     }
   }
 
@@ -101,7 +101,7 @@ export function CommunityPage() {
       {loading ? (
         <p className="text-muted-foreground text-sm">Loading community posts…</p>
       ) : loadError ? (
-        <p className="text-muted-foreground text-sm">Couldn't load the community feed. Try again shortly.</p>
+        <p className="text-destructive text-sm">Couldn't load the community feed: {loadError}</p>
       ) : posts.length === 0 ? (
         <p className="text-muted-foreground text-sm">
           No posts yet. Be the first to share how treatment is changing your appearance.
