@@ -59,14 +59,19 @@ interface PostRow {
   caption: string | null;
   created_at: string;
   reaction_count: number;
-  community_profiles: { pseudonym: string; avatar_seed: string } | null;
 }
 
-function rowToPost(row: PostRow, userId: string, reactedIds: Set<string>): CommunityPost {
+function rowToPost(
+  row: PostRow,
+  userId: string,
+  profiles: Map<string, CommunityIdentity>,
+  reactedIds: Set<string>,
+): CommunityPost {
+  const profile = profiles.get(row.user_id);
   return {
     id: row.id,
-    pseudonym: row.community_profiles?.pseudonym ?? "Anonymous",
-    avatarSeed: row.community_profiles?.avatar_seed ?? row.id,
+    pseudonym: profile?.pseudonym ?? "Anonymous",
+    avatarSeed: profile?.avatarSeed ?? row.id,
     photo: row.photo_url,
     caption: row.caption ?? undefined,
     createdAt: new Date(row.created_at).getTime(),
@@ -89,10 +94,10 @@ export const supabaseCommunityBackend: CommunityBackend = {
     const userId = await getUserId();
     await ensureProfile(userId);
 
-    const [{ data: posts, error }, { data: myReactions }] = await Promise.all([
+    const [{ data: posts, error }, { data: myReactions, error: reactionsError }] = await Promise.all([
       supabase
         .from("community_posts")
-        .select("id, user_id, photo_url, caption, created_at, reaction_count, community_profiles(pseudonym, avatar_seed)")
+        .select("id, user_id, photo_url, caption, created_at, reaction_count")
         .eq("hidden", false)
         .order("created_at", { ascending: false })
         .limit(100),
@@ -100,8 +105,25 @@ export const supabaseCommunityBackend: CommunityBackend = {
     ]);
 
     if (error) throw new Error(error.message);
+    if (reactionsError) throw new Error(reactionsError.message);
+
+    const postRows = (posts ?? []) as PostRow[];
+    const authorIds = Array.from(new Set(postRows.map((p) => p.user_id)));
+
+    const profiles = new Map<string, CommunityIdentity>();
+    if (authorIds.length > 0) {
+      const { data: profileRows, error: profilesError } = await supabase
+        .from("community_profiles")
+        .select("user_id, pseudonym, avatar_seed")
+        .in("user_id", authorIds);
+      if (profilesError) throw new Error(profilesError.message);
+      for (const p of profileRows ?? []) {
+        profiles.set(p.user_id, { pseudonym: p.pseudonym, avatarSeed: p.avatar_seed });
+      }
+    }
+
     const reactedIds = new Set((myReactions ?? []).map((r) => r.post_id as string));
-    return ((posts ?? []) as unknown as PostRow[]).map((row) => rowToPost(row, userId, reactedIds));
+    return postRows.map((row) => rowToPost(row, userId, profiles, reactedIds));
   },
 
   async createPost(input: CreatePostInput) {
