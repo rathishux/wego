@@ -1,4 +1,4 @@
-import { Trash2 } from "lucide-react";
+import { Camera, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { formatDate } from "@/lib/storage";
@@ -33,12 +33,16 @@ export function EntryList({ title, emptyLabel, rows, onDelete }: EntryListProps)
           className="bg-card flex items-start justify-between gap-3 rounded-lg border p-3"
         >
           <div className="flex min-w-0 items-start gap-3">
-            {row.photo && (
+            {row.photo ? (
               <img
                 src={row.photo}
                 alt=""
                 className="size-12 shrink-0 rounded-md border object-cover"
               />
+            ) : (
+              <div className="bg-muted text-muted-foreground flex size-12 shrink-0 items-center justify-center rounded-md border">
+                <Camera className="size-4" />
+              </div>
             )}
             <div className="min-w-0">
               <p className="text-sm font-semibold">{row.primary}</p>
