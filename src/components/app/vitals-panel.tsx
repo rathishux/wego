@@ -1,7 +1,6 @@
 import * as React from "react";
 
-import { GlucoseForm } from "@/components/app/forms/glucose-form";
-import { WeightForm } from "@/components/app/forms/weight-form";
+import { VitalsForm } from "@/components/app/forms/vitals-form";
 import { VitalsTimeline, type VitalsTimelineItem } from "@/components/app/vitals-timeline";
 import { useLocalList } from "@/hooks/use-local-list";
 import { KEYS, sortByDateAsc } from "@/lib/storage";
@@ -25,30 +24,52 @@ export function VitalsPanel({ onSaved }: VitalsPanelProps) {
   }, [weights]);
 
   const items: VitalsTimelineItem[] = React.useMemo(() => {
-    const weightItems: VitalsTimelineItem[] = weights.map((entry) => ({
-      type: "weight",
-      entry,
-      deltaFromPrevious: deltaById.get(entry.id) ?? null,
-    }));
-    const glucoseItems: VitalsTimelineItem[] = glucose.map((entry) => ({ type: "glucose", entry }));
-    return [...weightItems, ...glucoseItems].sort((a, b) => {
-      if (a.entry.date !== b.entry.date) return a.entry.date < b.entry.date ? 1 : -1;
-      return (b.entry.createdAt || 0) - (a.entry.createdAt || 0);
+    const glucoseByCreatedAt = new Map(glucose.map((g) => [g.createdAt, g]));
+    const pairedGlucoseIds = new Set<string>();
+
+    const weightItems: VitalsTimelineItem[] = weights.map((entry) => {
+      const matched = glucoseByCreatedAt.get(entry.createdAt) ?? null;
+      if (matched) pairedGlucoseIds.add(matched.id);
+      return {
+        id: entry.id,
+        date: entry.date,
+        createdAt: entry.createdAt,
+        weight: entry,
+        glucose: matched,
+        deltaFromPrevious: deltaById.get(entry.id) ?? null,
+      };
+    });
+
+    const orphanGlucoseItems: VitalsTimelineItem[] = glucose
+      .filter((g) => !pairedGlucoseIds.has(g.id))
+      .map((entry) => ({
+        id: entry.id,
+        date: entry.date,
+        createdAt: entry.createdAt,
+        weight: null,
+        glucose: entry,
+        deltaFromPrevious: null,
+      }));
+
+    return [...weightItems, ...orphanGlucoseItems].sort((a, b) => {
+      if (a.date !== b.date) return a.date < b.date ? 1 : -1;
+      return b.createdAt - a.createdAt;
     });
   }, [weights, glucose, deltaById]);
 
-  function handleDelete(type: "weight" | "glucose", id: string) {
-    if (type === "weight") removeWeight(id);
-    else removeGlucose(id);
+  function handleSubmit({ weight, glucose: glucoseEntry }: { weight: WeightEntry; glucose: GlucoseEntry | null }) {
+    addWeight(weight);
+    if (glucoseEntry) addGlucose(glucoseEntry);
+  }
+
+  function handleDelete(item: VitalsTimelineItem) {
+    if (item.weight) removeWeight(item.weight.id);
+    if (item.glucose) removeGlucose(item.glucose.id);
   }
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="grid gap-4 md:grid-cols-2">
-        <WeightForm onAdd={addWeight} onSaved={onSaved} />
-        <GlucoseForm onAdd={addGlucose} onSaved={onSaved} />
-      </div>
-
+      <VitalsForm onSubmit={handleSubmit} onSaved={onSaved} />
       <VitalsTimeline items={items} onDelete={handleDelete} />
     </div>
   );
