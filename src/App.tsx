@@ -10,6 +10,9 @@ import type { LogType } from "@/lib/types";
 const ProgressPage = React.lazy(() =>
   import("@/pages/progress-page").then((m) => ({ default: m.ProgressPage })),
 );
+const CommunityPage = React.lazy(() =>
+  import("@/pages/community-page").then((m) => ({ default: m.CommunityPage })),
+);
 
 export default function App() {
   const [page, setPage] = React.useState<PageId>("dashboard");
@@ -27,6 +30,11 @@ export default function App() {
       {page === "progress" && (
         <React.Suspense fallback={null}>
           <ProgressPage />
+        </React.Suspense>
+      )}
+      {page === "community" && (
+        <React.Suspense fallback={null}>
+          <CommunityPage />
         </React.Suspense>
       )}
       {page === "tips" && <TipsPage />}

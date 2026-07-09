@@ -1,6 +1,6 @@
-import { BookOpenText, LayoutDashboard, ListPlus, TrendingUp, type LucideIcon } from "lucide-react";
+import { BookOpenText, LayoutDashboard, ListPlus, TrendingUp, Users, type LucideIcon } from "lucide-react";
 
-export type PageId = "dashboard" | "log" | "progress" | "tips";
+export type PageId = "dashboard" | "log" | "progress" | "community" | "tips";
 
 export interface NavItem {
   id: PageId;
@@ -27,6 +27,12 @@ export const NAV_ITEMS: NavItem[] = [
     label: "Progress",
     description: "Trends and full history across your logs",
     icon: TrendingUp,
+  },
+  {
+    id: "community",
+    label: "Face Progress Community",
+    description: "Share and see how faces change during treatment — anonymously",
+    icon: Users,
   },
   {
     id: "tips",
