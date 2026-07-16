@@ -1,24 +1,12 @@
-import { createClient, type SupabaseClient } from "@supabase/supabase-js";
+import { getSupabase, isSupabaseConfigured } from "@/lib/supabase";
 
 import { generateAvatarSeed, generatePseudonym } from "./pseudonym";
 import type { CommunityBackend, CommunityIdentity, CommunityPost, CreatePostInput, ReportReason } from "./types";
 
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL as string | undefined;
-const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined;
-
-export const isSupabaseConfigured = Boolean(SUPABASE_URL && SUPABASE_ANON_KEY);
-
-let client: SupabaseClient | null = null;
-
-function getClient(): SupabaseClient {
-  if (!client) {
-    client = createClient(SUPABASE_URL!, SUPABASE_ANON_KEY!);
-  }
-  return client;
-}
+export { isSupabaseConfigured };
 
 async function getUserId(): Promise<string> {
-  const supabase = getClient();
+  const supabase = getSupabase();
   const { data } = await supabase.auth.getSession();
   if (data.session?.user) return data.session.user.id;
 
@@ -28,7 +16,7 @@ async function getUserId(): Promise<string> {
 }
 
 async function ensureProfile(userId: string): Promise<CommunityIdentity> {
-  const supabase = getClient();
+  const supabase = getSupabase();
   const { data: existing } = await supabase
     .from("community_profiles")
     .select("pseudonym, avatar_seed")
@@ -90,7 +78,7 @@ export const supabaseCommunityBackend: CommunityBackend = {
   },
 
   async listFeed() {
-    const supabase = getClient();
+    const supabase = getSupabase();
     const userId = await getUserId();
     await ensureProfile(userId);
 
@@ -127,7 +115,7 @@ export const supabaseCommunityBackend: CommunityBackend = {
   },
 
   async createPost(input: CreatePostInput) {
-    const supabase = getClient();
+    const supabase = getSupabase();
     const userId = await getUserId();
     const identity = await ensureProfile(userId);
 
@@ -162,13 +150,13 @@ export const supabaseCommunityBackend: CommunityBackend = {
   },
 
   async deletePost(id: string) {
-    const supabase = getClient();
+    const supabase = getSupabase();
     const { error } = await supabase.from("community_posts").delete().eq("id", id);
     if (error) throw new Error(error.message);
   },
 
   async toggleReaction(id: string) {
-    const supabase = getClient();
+    const supabase = getSupabase();
     const userId = await getUserId();
     const { data: existing } = await supabase
       .from("community_reactions")
@@ -187,7 +175,7 @@ export const supabaseCommunityBackend: CommunityBackend = {
   },
 
   async reportPost(id: string, reason: ReportReason) {
-    const supabase = getClient();
+    const supabase = getSupabase();
     const userId = await getUserId();
     const { error } = await supabase.from("community_reports").insert({ post_id: id, user_id: userId, reason });
     if (error) throw new Error(error.message);

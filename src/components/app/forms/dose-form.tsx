@@ -9,12 +9,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { useLocalList } from "@/hooks/use-local-list";
-import { KEYS, sortByDateDesc, todayISO, uid } from "@/lib/storage";
+import { useEntries } from "@/hooks/use-entries";
+import { sortByDateDesc, todayISO, uid } from "@/lib/storage";
 import { DOSE_STEPS, type DoseEntry } from "@/lib/types";
 
 export function DoseForm({ onSaved }: { onSaved: () => void }) {
-  const { list, add, remove } = useLocalList<DoseEntry>(KEYS.doses);
+  const { list, add, remove } = useEntries<DoseEntry>("dose");
   const [date, setDate] = React.useState(todayISO());
   const [dose, setDose] = React.useState<string>(DOSE_STEPS[0]);
   const [site, setSite] = React.useState("");

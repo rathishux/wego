@@ -2,8 +2,8 @@ import * as React from "react";
 
 import { VitalsForm } from "@/components/app/forms/vitals-form";
 import { VitalsTimeline, type VitalsTimelineItem } from "@/components/app/vitals-timeline";
-import { useLocalList } from "@/hooks/use-local-list";
-import { KEYS, sortByDateAsc } from "@/lib/storage";
+import { useEntries } from "@/hooks/use-entries";
+import { sortByDateAsc } from "@/lib/storage";
 import type { GlucoseEntry, WeightEntry } from "@/lib/types";
 
 interface VitalsPanelProps {
@@ -11,8 +11,20 @@ interface VitalsPanelProps {
 }
 
 export function VitalsPanel({ onSaved }: VitalsPanelProps) {
-  const { list: weights, add: addWeight, remove: removeWeight } = useLocalList<WeightEntry>(KEYS.weights);
-  const { list: glucose, add: addGlucose, remove: removeGlucose } = useLocalList<GlucoseEntry>(KEYS.glucose);
+  const {
+    list: weights,
+    add: addWeight,
+    remove: removeWeight,
+    loading: weightLoading,
+    error: weightError,
+  } = useEntries<WeightEntry>("weight");
+  const {
+    list: glucose,
+    add: addGlucose,
+    remove: removeGlucose,
+    loading: glucoseLoading,
+    error: glucoseError,
+  } = useEntries<GlucoseEntry>("glucose");
 
   const deltaById = React.useMemo(() => {
     const ascending = sortByDateAsc(weights);
@@ -65,6 +77,15 @@ export function VitalsPanel({ onSaved }: VitalsPanelProps) {
   function handleDelete(item: VitalsTimelineItem) {
     if (item.weight) removeWeight(item.weight.id);
     if (item.glucose) removeGlucose(item.glucose.id);
+  }
+
+  if (weightLoading || glucoseLoading) {
+    return <p className="text-muted-foreground text-sm">Loading…</p>;
+  }
+
+  const dataError = weightError || glucoseError;
+  if (dataError) {
+    return <p className="text-destructive text-sm">Couldn't load your data: {dataError}</p>;
   }
 
   return (

@@ -130,3 +130,13 @@ This is a deliberate, scoped exception to Section 3's "no social/sharing feature
 - **Safety requirements (non-negotiable for this feature):** explicit one-time consent screen plus a per-post acknowledgment checkbox before anything is posted; report-and-auto-hide (a post is pulled from public view after 3 reports, pending manual review); users can delete their own posts at any time; no open-ended public comments in v1 (a single lightweight "support" reaction only), to limit the surface for mockery or harassment.
 - **Infrastructure:** requires a real backend (Supabase: Postgres + anonymous auth + storage) since, unlike the rest of the app, data must be shared across users. Falls back to a clearly labeled on-device "demo mode" when no backend is configured, so the feature degrades gracefully rather than breaking.
 - **Explicitly out of scope for v1:** in-app moderation/admin UI (reviewed via the Supabase dashboard directly for now), blur/crop tooling before posting, follows/DMs, and any leaderboard, streak, or contest mechanic.
+
+## 14. v1.3 Addendum — Account login and cloud sync (opt-in)
+
+This revises Section 6.7 ("Data Persistence") and the "no login/account required" framing in Sections 1 and 3 — but only when a backend is configured. With no backend configured, the app behaves exactly as originally specified (fully local, no account).
+
+- **What it is:** an opt-in account system, gated entirely behind whether a Supabase backend is configured. When configured, the whole app (not just Community) requires sign-in, and dose/weight/glucose/food/progress-photo/marker data moves from `localStorage` into a private, per-account table instead — enabling multi-device use.
+- **Sign-in method:** passwordless email one-time-code (OTP), chosen over a traditional password. Rationale: lower friction for a daily-use personal health app, no password-reset flow to build/support, and it avoids the security downsides of password reuse — consistent with where modern consumer apps have been trending. Deliberately no password field exists.
+- **Local data is preserved, not discarded:** on first sign-in, any existing local data in that browser is automatically imported into the new account once (tracked via a local flag to avoid re-importing).
+- **Graceful degradation:** if no backend is configured, the app requires no login at all and behaves exactly as in v1 — this is the default, unconfigured state, and is what keeps local development possible without any setup.
+- **Explicitly out of scope for v1:** a full account-import/merge UI (the import is automatic and silent beyond a confirmation toast), social/OAuth sign-in (Google/Apple), phone-number OTP, and account deletion/data-export tooling.

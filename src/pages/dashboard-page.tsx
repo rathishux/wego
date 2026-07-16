@@ -4,9 +4,9 @@ import type { PageId } from "@/components/app/nav-items";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useLocalList } from "@/hooks/use-local-list";
+import { useEntries } from "@/hooks/use-entries";
 import { FEED_TAG_LABEL, FEED_TAG_STYLE, buildFeed } from "@/lib/feed";
-import { KEYS, addDays, formatDateShort, sortByDateAsc, sortByDateDesc } from "@/lib/storage";
+import { addDays, formatDateShort, sortByDateAsc, sortByDateDesc } from "@/lib/storage";
 import type { DoseEntry, FoodEntry, GlucoseEntry, LogType, WeightEntry } from "@/lib/types";
 
 interface DashboardPageProps {
@@ -14,10 +14,13 @@ interface DashboardPageProps {
 }
 
 export function DashboardPage({ onNavigate }: DashboardPageProps) {
-  const { list: doseList } = useLocalList<DoseEntry>(KEYS.doses);
-  const { list: weightList } = useLocalList<WeightEntry>(KEYS.weights);
-  const { list: glucoseList } = useLocalList<GlucoseEntry>(KEYS.glucose);
-  const { list: foodList } = useLocalList<FoodEntry>(KEYS.food);
+  const { list: doseList, loading: doseLoading, error: doseError } = useEntries<DoseEntry>("dose");
+  const { list: weightList, loading: weightLoading, error: weightError } = useEntries<WeightEntry>("weight");
+  const { list: glucoseList, loading: glucoseLoading, error: glucoseError } = useEntries<GlucoseEntry>("glucose");
+  const { list: foodList, loading: foodLoading, error: foodError } = useEntries<FoodEntry>("food");
+
+  const dataLoading = doseLoading || weightLoading || glucoseLoading || foodLoading;
+  const dataError = doseError || weightError || glucoseError || foodError;
 
   const doses = sortByDateDesc(doseList);
   const weights = sortByDateAsc(weightList);
@@ -33,6 +36,14 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
     weights.length > 1 && lastWeight ? +(lastWeight.weight - firstWeight.weight).toFixed(1) : null;
 
   const feed = buildFeed(doses, weights, glucose, foodList).slice(0, 8);
+
+  if (dataLoading) {
+    return <p className="text-muted-foreground text-sm">Loading your dashboard…</p>;
+  }
+
+  if (dataError) {
+    return <p className="text-destructive text-sm">Couldn't load your data: {dataError}</p>;
+  }
 
   return (
     <div className="flex flex-col gap-6">

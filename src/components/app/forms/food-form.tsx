@@ -9,12 +9,12 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { useLocalList } from "@/hooks/use-local-list";
-import { KEYS, sortByDateDesc, todayISO, uid } from "@/lib/storage";
+import { useEntries } from "@/hooks/use-entries";
+import { sortByDateDesc, todayISO, uid } from "@/lib/storage";
 import type { FoodEntry } from "@/lib/types";
 
 export function FoodForm({ onSaved }: { onSaved: () => void }) {
-  const { list, add, remove } = useLocalList<FoodEntry>(KEYS.food);
+  const { list, add, remove } = useEntries<FoodEntry>("food");
   const [date, setDate] = React.useState(todayISO());
   const [meal, setMeal] = React.useState("");
   const [protein, setProtein] = React.useState(false);
