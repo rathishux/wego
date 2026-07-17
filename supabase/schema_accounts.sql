@@ -8,7 +8,7 @@
 -- password mode, no extra toggle needed on most projects).
 
 create table if not exists entries (
-  id uuid primary key,
+  id text primary key,
   user_id uuid not null references auth.users (id) on delete cascade,
   type text not null check (type in ('dose', 'weight', 'glucose', 'food', 'progress_photo')),
   created_at bigint not null,
