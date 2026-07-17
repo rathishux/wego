@@ -56,7 +56,7 @@ export function LoginPage() {
           <CardDescription>
             {step === "email"
               ? "No password needed — we'll email you a one-time code."
-              : `We sent a 6-digit code to ${email}.`}
+              : `We sent a one-time code to ${email}.`}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -82,13 +82,13 @@ export function LoginPage() {
           ) : (
             <form onSubmit={handleVerifyCode} className="flex flex-col gap-4">
               <div className="space-y-1.5">
-                <Label htmlFor="login-code">6-digit code</Label>
+                <Label htmlFor="login-code">One-time code</Label>
                 <Input
                   id="login-code"
                   inputMode="numeric"
                   autoComplete="one-time-code"
                   placeholder="123456"
-                  maxLength={6}
+                  maxLength={12}
                   value={code}
                   onChange={(e) => setCode(e.target.value.replace(/\D/g, ""))}
                   required
