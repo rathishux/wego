@@ -1,8 +1,8 @@
-import { Leaf, LogOut } from "lucide-react";
+import { Leaf } from "lucide-react";
 
+import { AccountMenu } from "@/components/app/account-menu";
 import { NAV_ITEMS, type PageId } from "@/components/app/nav-items";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
 import { cn } from "@/lib/utils";
 
@@ -48,17 +48,11 @@ export function AppSidebar({ active, onNavigate }: AppSidebarProps) {
         })}
       </nav>
 
-      <div className="mt-auto flex flex-col gap-2 px-2">
+      <div className="mt-auto px-1">
         {cloudEnabled && user ? (
-          <>
-            <p className="text-muted-foreground truncate text-xs">{user.email}</p>
-            <Button variant="outline" size="sm" className="w-fit gap-1.5" onClick={() => signOut()}>
-              <LogOut className="size-3.5" />
-              Sign out
-            </Button>
-          </>
+          <AccountMenu user={user} onSignOut={() => signOut()} />
         ) : (
-          <Badge variant="secondary" className="w-fit">
+          <Badge variant="secondary" className="mx-1 w-fit">
             Private · on this device only
           </Badge>
         )}
