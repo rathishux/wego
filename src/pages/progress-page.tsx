@@ -11,31 +11,24 @@ import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } f
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { FEED_TAG_LABEL, FEED_TAG_STYLE, buildFeed } from "@/lib/feed";
-import { useLocalList } from "@/hooks/use-local-list";
-import {
-  KEYS,
-  addDays,
-  formatDate,
-  formatDateTime,
-  loadValue,
-  migrateLegacyFacePhoto,
-  saveValue,
-  sortByDateAsc,
-  sortByDateDesc,
-  todayISO,
-  uid,
-} from "@/lib/storage";
-import type { DoseEntry, FoodEntry, GlucoseEntry, Markers, ProgressPhoto, WeightEntry } from "@/lib/types";
+import { useAuth } from "@/hooks/use-auth";
+import { useEntries } from "@/hooks/use-entries";
+import { useMarkers } from "@/hooks/use-markers";
+import { addDays, formatDate, formatDateTime, migrateLegacyFacePhoto, sortByDateAsc, sortByDateDesc, todayISO, uid } from "@/lib/storage";
+import type { DoseEntry, FoodEntry, GlucoseEntry, ProgressPhoto, WeightEntry } from "@/lib/types";
 
 const chartConfig: ChartConfig = {
   weight: { label: "Weight (kg)", color: "var(--chart-2)" },
 };
 
 export function ProgressPage() {
-  const { list: doseList } = useLocalList<DoseEntry>(KEYS.doses);
-  const { list: weightList } = useLocalList<WeightEntry>(KEYS.weights);
-  const { list: glucoseList } = useLocalList<GlucoseEntry>(KEYS.glucose);
-  const { list: foodList } = useLocalList<FoodEntry>(KEYS.food);
+  const { list: doseList, loading: doseLoading, error: doseError } = useEntries<DoseEntry>("dose");
+  const { list: weightList, loading: weightLoading, error: weightError } = useEntries<WeightEntry>("weight");
+  const { list: glucoseList, loading: glucoseLoading, error: glucoseError } = useEntries<GlucoseEntry>("glucose");
+  const { list: foodList, loading: foodLoading, error: foodError } = useEntries<FoodEntry>("food");
+
+  const dataLoading = doseLoading || weightLoading || glucoseLoading || foodLoading;
+  const dataError = doseError || weightError || glucoseError || foodError;
 
   const weights = sortByDateAsc(weightList);
   const cutoff = addDays(todayISO(), -30).toISOString().slice(0, 10);
@@ -54,6 +47,14 @@ export function ProgressPage() {
   const giCount = doseList.filter((d) => d.sideEffects && d.sideEffects.trim().length > 0).length;
 
   const feed = buildFeed(sortByDateDesc(doseList), weights, sortByDateDesc(glucoseList), foodList);
+
+  if (dataLoading) {
+    return <p className="text-muted-foreground text-sm">Loading your progress…</p>;
+  }
+
+  if (dataError) {
+    return <p className="text-destructive text-sm">Couldn't load your data: {dataError}</p>;
+  }
 
   return (
     <div className="flex flex-col gap-6">
@@ -171,17 +172,7 @@ export function ProgressPage() {
 }
 
 function ProgressMarkers({ giCount }: { giCount: number }) {
-  const [markers, setMarkers] = React.useState<Markers>(() =>
-    loadValue(KEYS.markers, { waist: "", sleep: "", mood: "" }),
-  );
-
-  function updateMarker(key: keyof Markers, value: string) {
-    setMarkers((prev) => {
-      const next = { ...prev, [key]: value };
-      saveValue(KEYS.markers, next);
-      return next;
-    });
-  }
+  const { markers, update } = useMarkers();
 
   return (
     <Card>
@@ -198,7 +189,7 @@ function ProgressMarkers({ giCount }: { giCount: number }) {
             <Input
               id="marker-waist"
               value={markers.waist}
-              onChange={(e) => updateMarker("waist", e.target.value)}
+              onChange={(e) => update("waist", e.target.value)}
               placeholder="—"
             />
           </div>
@@ -209,7 +200,7 @@ function ProgressMarkers({ giCount }: { giCount: number }) {
             <Input
               id="marker-sleep"
               value={markers.sleep}
-              onChange={(e) => updateMarker("sleep", e.target.value)}
+              onChange={(e) => update("sleep", e.target.value)}
               placeholder="—"
             />
           </div>
@@ -220,7 +211,7 @@ function ProgressMarkers({ giCount }: { giCount: number }) {
             <Input
               id="marker-mood"
               value={markers.mood}
-              onChange={(e) => updateMarker("mood", e.target.value)}
+              onChange={(e) => update("mood", e.target.value)}
               placeholder="—"
             />
           </div>
@@ -237,11 +228,13 @@ function ProgressMarkers({ giCount }: { giCount: number }) {
 }
 
 function ProgressPhotoGallery() {
+  const { cloudEnabled } = useAuth();
+
   React.useEffect(() => {
     migrateLegacyFacePhoto();
   }, []);
 
-  const { list, add, remove } = useLocalList<ProgressPhoto>(KEYS.progressPhotos);
+  const { list, add, remove } = useEntries<ProgressPhoto>("progress_photo");
   const photos = [...list].sort((a, b) => b.createdAt - a.createdAt);
 
   function handleCapture(photo: string) {
@@ -254,7 +247,8 @@ function ProgressPhotoGallery() {
       <CardHeader>
         <CardTitle>Progress photos</CardTitle>
         <p className="text-muted-foreground text-sm">
-          A private, timestamped record of how you're looking — stored only on this device
+          A private, timestamped record of how you're looking
+          {cloudEnabled ? " — synced to your account" : " — stored only on this device"}
         </p>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">

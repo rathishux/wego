@@ -1,11 +1,15 @@
 import * as React from "react";
+import { toast } from "sonner";
 
 import { AppShell } from "@/components/app/app-shell";
 import type { PageId } from "@/components/app/nav-items";
+import { useAuth } from "@/hooks/use-auth";
+import { migrateLocalDataToCloud } from "@/lib/migrate-local-data";
+import type { LogType } from "@/lib/types";
 import { DashboardPage } from "@/pages/dashboard-page";
 import { LogEntryPage } from "@/pages/log-entry-page";
+import { LoginPage } from "@/pages/login-page";
 import { TipsPage } from "@/pages/tips-page";
-import type { LogType } from "@/lib/types";
 
 const ProgressPage = React.lazy(() =>
   import("@/pages/progress-page").then((m) => ({ default: m.ProgressPage })),
@@ -15,8 +19,40 @@ const CommunityPage = React.lazy(() =>
 );
 
 export default function App() {
+  const { cloudEnabled, user, loading } = useAuth();
+
+  if (cloudEnabled && loading) {
+    return (
+      <div className="bg-background flex min-h-svh items-center justify-center">
+        <p className="text-muted-foreground text-sm">Loading…</p>
+      </div>
+    );
+  }
+
+  if (cloudEnabled && !user) {
+    return <LoginPage />;
+  }
+
+  return <MainApp />;
+}
+
+function MainApp() {
+  const { cloudEnabled, user } = useAuth();
   const [page, setPage] = React.useState<PageId>("dashboard");
   const [logTab, setLogTab] = React.useState<LogType>("dose");
+
+  React.useEffect(() => {
+    if (!cloudEnabled || !user) return;
+    migrateLocalDataToCloud(user.id)
+      .then((count) => {
+        if (count) {
+          toast.success(`Imported ${count} existing local ${count === 1 ? "entry" : "entries"} into your account.`);
+        }
+      })
+      .catch((err) => {
+        toast.error(err instanceof Error ? err.message : "Couldn't import your existing local data.");
+      });
+  }, [cloudEnabled, user]);
 
   function navigate(next: PageId, tab?: LogType) {
     setPage(next);
