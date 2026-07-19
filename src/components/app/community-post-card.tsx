@@ -1,5 +1,6 @@
-import { Flag, Heart, MessageCircle, Send, Trash2 } from "lucide-react";
+import { Flag, Heart, MessageCircle, Send, Share, Trash2 } from "lucide-react";
 import * as React from "react";
+import { toast } from "sonner";
 
 import { CommunityAvatar } from "@/components/app/community-avatar";
 import { Button } from "@/components/ui/button";
@@ -7,8 +8,18 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { communityBackend, type CommunityComment, type CommunityPost, type ReportReason } from "@/lib/community";
+import { shareNative } from "@/lib/share";
 import { formatRelativeTime } from "@/lib/storage";
 import { cn } from "@/lib/utils";
+
+async function handleDeviceShare(post: CommunityPost) {
+  try {
+    await shareNative({ photo: post.photo, text: post.caption });
+  } catch (err) {
+    if (err instanceof DOMException && err.name === "AbortError") return;
+    toast.error(err instanceof Error ? err.message : "Couldn't open the share sheet.");
+  }
+}
 
 const REPORT_REASONS: { value: ReportReason; label: string }[] = [
   { value: "mocking", label: "Mocking or harassment" },
@@ -181,19 +192,6 @@ export function CommunityPostCard({
           <p className="truncate text-sm font-medium">{post.pseudonym}</p>
           <p className="text-muted-foreground text-xs">{formatRelativeTime(post.createdAt)}</p>
         </div>
-        {post.mine ? (
-          <Button
-            variant="ghost"
-            size="icon"
-            className="text-destructive hover:bg-destructive/10 hover:text-destructive size-8 shrink-0"
-            aria-label="Delete post"
-            onClick={() => onDelete(post.id)}
-          >
-            <Trash2 className="size-4" />
-          </Button>
-        ) : (
-          <ReportButton onReport={(reason) => onReport(post.id, reason)} />
-        )}
       </div>
 
       {post.photo && <img src={post.photo} alt="" className="aspect-square w-full object-cover" />}
@@ -205,25 +203,52 @@ export function CommunityPostCard({
           </p>
         )}
 
-        <div className="-ml-2 flex items-center gap-1">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => onToggleReaction(post.id)}
-            className={cn("gap-1.5", post.reactedByMe && "text-destructive")}
-          >
-            <Heart className={cn("size-4", post.reactedByMe && "fill-current")} />
-            {post.reactionCount > 0 ? post.reactionCount : "Support"}
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="text-muted-foreground gap-1.5"
-            onClick={() => setCommentsOpen((v) => !v)}
-          >
-            <MessageCircle className="size-4" />
-            {post.commentCount > 0 ? post.commentCount : "Reply"}
-          </Button>
+        <div className="-ml-2 flex items-center justify-between gap-1">
+          <div className="flex items-center gap-1">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => onToggleReaction(post.id)}
+              className={cn("gap-1.5", post.reactedByMe && "text-destructive")}
+            >
+              <Heart className={cn("size-4", post.reactedByMe && "fill-current")} />
+              {post.reactionCount > 0 ? post.reactionCount : "Support"}
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-muted-foreground gap-1.5"
+              onClick={() => setCommentsOpen((v) => !v)}
+            >
+              <MessageCircle className="size-4" />
+              {post.commentCount > 0 ? post.commentCount : "Reply"}
+            </Button>
+          </div>
+
+          {post.mine ? (
+            <div className="flex items-center gap-1">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-muted-foreground size-8 shrink-0"
+                aria-label="Share to other apps"
+                onClick={() => handleDeviceShare(post)}
+              >
+                <Share className="size-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-destructive hover:bg-destructive/10 hover:text-destructive size-8 shrink-0"
+                aria-label="Delete post"
+                onClick={() => onDelete(post.id)}
+              >
+                <Trash2 className="size-4" />
+              </Button>
+            </div>
+          ) : (
+            <ReportButton onReport={(reason) => onReport(post.id, reason)} />
+          )}
         </div>
 
         {commentsOpen && (
