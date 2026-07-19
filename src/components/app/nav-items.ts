@@ -68,6 +68,10 @@ export const NAV_ITEMS: NavItem[] = [
   },
 ];
 
+// The 5 primary destinations shown in the mobile bottom tab bar (iOS/Android
+// convention caps out around 5 tabs). Tips moves into Settings on mobile.
+export const MOBILE_TAB_ITEMS: NavItem[] = NAV_ITEMS.filter((item) => item.id !== "tips");
+
 // Reachable from the account menu / Settings, not shown in the main sidebar nav.
 export const SECONDARY_ITEMS: NavItem[] = [
   {

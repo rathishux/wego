@@ -75,7 +75,7 @@ export function YouPage() {
         <DialogTrigger asChild>
           <Button
             size="icon"
-            className="fixed right-6 bottom-6 z-40 size-14 rounded-full shadow-lg"
+            className="fixed right-6 bottom-[calc(5.5rem+env(safe-area-inset-bottom))] z-40 size-14 rounded-full shadow-lg md:bottom-6"
             aria-label="New entry"
           >
             <Plus className="size-6" />

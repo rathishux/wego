@@ -116,7 +116,7 @@ One primary user profile for v1: an adult prediabetic patient prescribed Wegovy,
 
 ## 12. v1.1 Addendum — Web-first rebuild
 
-- The product is being built **web-first** (desktop + mobile browser), using the **shadcn/ui** design system (React + Tailwind + Radix). A native mobile app wrapper is deferred to a later phase and is not part of this codebase.
+- The product is being built **web-first** (desktop + mobile browser), using the **shadcn/ui** design system (React + Tailwind + Radix). (A native mobile app wrapper was deferred at this point in the project; see Section 17 for when it was added.)
 - Every log type (dose, weight, glucose, food) now supports an optional **take photo / upload photo** attachment, captured client-side and compressed before storage.
 - The **Progress** screen was expanded into a full chronological history of every log entry — including its photo and full details — plus a private, timestamped progress-photo gallery, in addition to the existing weight trend chart, weekly rhythm, and progress markers.
 
@@ -155,3 +155,13 @@ This revises Section 6.7 ("Data Persistence") and the "no login/account required
 - **Settings page:** account info (signed-in email + sign out, or a note about local-only mode), an appearance switcher (light/dark/system), and links to the two legal pages. Not a top-level nav item — reached only via the account menu, to keep the main sidebar focused on tracking features.
 - **Privacy Policy and Terms & Conditions:** standard-launch boilerplate pages describing what Steady actually does (local-first storage, opt-in cloud sync, Community's public/pseudonymous exception, no medical advice) — explicitly marked as a draft starting point, not reviewed legal advice, since Section 12 already carries the same "not medical advice" boundary that these pages restate for the legal surface.
 - **Explicitly out of scope for this addendum:** real payment/subscription tiers (no monetization exists in the product), a cookie-consent banner (not applicable — Steady doesn't use tracking cookies), and data export/account deletion tooling (already tracked as out of scope in Section 14).
+
+## 17. v1.6 Addendum — Native iOS and Android apps
+
+This revises Section 12: the native mobile app wrapper deferred there is now part of this codebase.
+
+- **Approach:** Capacitor wraps the existing web app in a native shell rather than a from-scratch rewrite (e.g. React Native/Flutter) — one codebase, one Supabase backend, every web feature carries over automatically instead of being reimplemented.
+- **Platform-adaptive, not a straight wrapper, per explicit request:** a bottom tab bar (the iOS/Android navigation convention) replaces the sidebar below desktop width; compose dialogs become edge-to-edge bottom sheets on mobile instead of staying centered modals; photo capture uses the native camera/photo-library pickers instead of a browser file input; sharing uses the native share sheet instead of the Web Share API; layout respects safe areas (notch, home indicator, status/navigation bars); the Android hardware back button navigates within the app; status bar style follows the light/dark theme.
+- **Tab bar scope:** capped at 5 destinations (Dashboard, Log entry, Progress, You, Community) per iOS HIG guidance. Tips moved into Settings on mobile to make room; Settings/Privacy Policy/Terms & Conditions stay reachable via the account menu on every platform.
+- **Build/publish is explicitly out of scope for the agent doing this work:** producing a signed, installable binary and publishing to the App Store/Play Store requires Xcode on a Mac and each platform's developer account, neither of which exist in this project's dev environment. What's delivered instead is the fully configured Capacitor project (`capacitor.config.ts`, generated `android/` and `ios/` native projects, placeholder app icon/splash resources) ready to open directly in Android Studio / Xcode.
+- **Explicitly out of scope for this addendum:** push notifications, deep linking, biometric login, and any native widget/watch companion — all deferred to a future phase if needed.

@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { AppShell } from "@/components/app/app-shell";
 import type { PageId } from "@/components/app/nav-items";
 import { useAuth } from "@/hooks/use-auth";
+import { useNativeShell } from "@/hooks/use-native-shell";
 import { migrateLocalDataToCloud } from "@/lib/migrate-local-data";
 import type { LogType } from "@/lib/types";
 import { DashboardPage } from "@/pages/dashboard-page";
@@ -66,6 +67,8 @@ function MainApp() {
     setPage(next);
     if (tab) setLogTab(tab);
   }
+
+  useNativeShell(page, navigate);
 
   return (
     <AppShell active={page} onNavigate={navigate}>

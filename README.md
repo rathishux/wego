@@ -14,7 +14,7 @@ See `PRD.md` for the full product requirements.
   - **Cloud-synced**: once a Supabase backend is configured, the app requires signing in (passwordless email code) and all tracking data syncs to your account instead of just one device.
 - `vite-plugin-pwa` for installability (works offline, add-to-home-screen)
 
-This is being built web-first. A native mobile app (e.g. via Capacitor) is a planned follow-up, not part of this codebase yet.
+This is built web-first, and also ships as native iOS and Android apps via **Capacitor** — same codebase, same Supabase backend, wrapped in a native shell with platform-appropriate navigation and native APIs (camera, share sheet). See "iOS & Android apps" below.
 
 ## Running locally
 
@@ -107,6 +107,32 @@ To enable it for real, using a free [Supabase](https://supabase.com) project:
 
 There's no in-app admin panel yet. Reported/auto-hidden posts and comments can be reviewed and restored (or permanently removed) directly from the Supabase Table Editor: check `community_posts.hidden = true` / `community_comments.hidden = true`, and `community_reports` / `community_comment_reports` for the reasons filed against them.
 
+## iOS & Android apps
+
+Steady wraps the same web app in a native shell using [Capacitor](https://capacitorjs.com), rather than being a from-scratch rewrite — so it shares one codebase, one Supabase backend, and gets every web feature automatically. On top of that, the app adapts itself for mobile:
+
+- **Native-style navigation:** a bottom tab bar (Dashboard, Log entry, Progress, You, Community) replaces the sidebar below desktop width — the standard iOS/Android pattern — with Settings/Privacy/Terms tucked into the account menu, and Tips reachable from Settings.
+- **Native camera & photo picker:** on the iOS/Android apps, "Take photo" and "Upload" open the real native camera and photo library pickers (via `@capacitor/camera`) instead of a browser file input.
+- **Native share sheet:** the share icon on You and Community posts opens the real iOS/Android share sheet (via `@capacitor/share`), not just the web Share API.
+- **Bottom-sheet dialogs:** compose forms slide up from the bottom edge-to-edge on mobile (the native modal convention) and stay a centered dialog on desktop.
+- **Safe areas:** layout respects the iPhone notch/home indicator and Android status/navigation bars.
+- **Android hardware back button** navigates within the app (back to Dashboard) instead of instantly closing it, and the status bar style follows light/dark theme.
+
+### What's already set up vs. what you still need to do
+
+This repo includes the Capacitor config and the generated `android/` and `ios/` native projects, ready to open in Android Studio / Xcode. What it can't do from this environment: **actually compile a signed app or publish to a store** — that needs the Android SDK / Xcode toolchains and your own developer accounts, none of which exist here. Concretely, that means:
+
+1. **Pick your own app ID.** `capacitor.config.ts` ships with a placeholder `appId: "com.steady.app"`. Change it to your own reverse-domain identifier (e.g. `com.yourname.steady`) *before* you first build — it can't be changed later without publishing as a new app.
+2. **Replace the placeholder icon/splash.** `resources/icon.png` and `resources/splash.png` were generated from the existing app icon as a starting point (and still have the icon's rounded corners baked in, so it'll double-round on iOS). Swap in a proper 1024×1024 square icon, then run:
+   ```
+   npx @capacitor/assets generate --iconBackgroundColor '#1f6f50' --iconBackgroundColorDark '#132a20' --splashBackgroundColor '#fafaf5' --splashBackgroundColorDark '#17231c'
+   ```
+   This downloads image-processing binaries from GitHub, so run it on your own machine, not in a restricted network environment.
+3. **Android:** install [Android Studio](https://developer.android.com/studio), then run `npm run cap:android` — it builds the web app, syncs it into `android/`, and opens the project. From there, Android Studio handles SDK downloads, running on an emulator/device, and building a signed release bundle for the Play Store.
+4. **iOS (requires a Mac):** install Xcode, then run `npm run cap:ios` — it builds, syncs into `ios/`, and opens the Xcode project (no CocoaPods needed; it uses Swift Package Manager). From there, set your Team/signing in Xcode's Signing & Capabilities tab, then run on a simulator/device or archive for the App Store.
+5. **After any web code change**, run `npm run cap:sync` before rebuilding either native app — it rebuilds `dist/` and copies it into both native projects.
+6. **Store listings** need their own assets and text (screenshots, description, privacy policy URL — `Settings → Privacy Policy` in-app can be adapted for this) which aren't part of this repo.
+
 ## Structure
 
 - `src/pages/` — the top-level screens (Dashboard, Log entry, Progress, You, Community, Tips, Settings, Privacy Policy, Terms & Conditions) plus `login-page.tsx`
@@ -121,3 +147,8 @@ There's no in-app admin panel yet. Reported/auto-hidden posts and comments can b
 - `supabase/schema_accounts.sql` — database schema and RLS policies for private, per-account cloud-synced tracking data
 - `supabase/schema_v2.sql` — the You timeline's entry type, optional Community photos, and Community comments
 - `public/icon.svg` — app icon (used for favicon and PWA manifest)
+- `capacitor.config.ts` — native app config (app ID, name, splash screen)
+- `android/`, `ios/` — the generated native projects for the Play Store / App Store builds (open directly in Android Studio / Xcode)
+- `resources/` — source icon/splash images used by `@capacitor/assets` to generate all the native icon sizes
+- `src/hooks/use-native-shell.tsx` — wires up native-only behavior (Android back button, status bar style) on Capacitor builds; no-ops on the web
+- `src/lib/share.ts` — the share helper used by You/Community, using the native share sheet on Capacitor builds and the Web Share API on the web

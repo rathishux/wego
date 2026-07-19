@@ -1,4 +1,4 @@
-import { ArrowLeft, FileText, LogOut, Monitor, Moon, ShieldCheck, Sun } from "lucide-react";
+import { ArrowLeft, BookOpenText, FileText, LogOut, Monitor, Moon, ShieldCheck, Sun } from "lucide-react";
 
 import type { PageId } from "@/components/app/nav-items";
 import { Button } from "@/components/ui/button";
@@ -85,6 +85,13 @@ export function SettingsPage({ onNavigate }: SettingsPageProps) {
           <CardTitle className="text-base">About</CardTitle>
         </CardHeader>
         <CardContent className="flex flex-col gap-1">
+          <button
+            type="button"
+            className="hover:bg-accent -mx-2 flex items-center gap-2.5 rounded-md px-2 py-2 text-left text-sm md:hidden"
+            onClick={() => onNavigate("tips")}
+          >
+            <BookOpenText className="text-muted-foreground size-4" /> Tips
+          </button>
           <button
             type="button"
             className="hover:bg-accent -mx-2 flex items-center gap-2.5 rounded-md px-2 py-2 text-left text-sm"

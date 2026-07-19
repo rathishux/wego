@@ -3,7 +3,7 @@ import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { shareNative } from "@/lib/share";
+import { isShareCancelled, shareNative } from "@/lib/share";
 import { formatRelativeTime } from "@/lib/storage";
 import type { YouPost } from "@/lib/types";
 
@@ -22,7 +22,7 @@ async function handleDeviceShare(post: YouPost) {
       text: post.description,
     });
   } catch (err) {
-    if (err instanceof DOMException && err.name === "AbortError") return;
+    if (isShareCancelled(err)) return;
     toast.error(err instanceof Error ? err.message : "Couldn't open the share sheet.");
   }
 }
