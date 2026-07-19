@@ -1,6 +1,6 @@
-import { BookOpenText, LayoutDashboard, ListPlus, TrendingUp, Users, type LucideIcon } from "lucide-react";
+import { BookOpenText, Camera, LayoutDashboard, ListPlus, TrendingUp, Users, type LucideIcon } from "lucide-react";
 
-export type PageId = "dashboard" | "log" | "progress" | "community" | "tips";
+export type PageId = "dashboard" | "log" | "progress" | "you" | "community" | "tips";
 
 export interface NavItem {
   id: PageId;
@@ -29,9 +29,15 @@ export const NAV_ITEMS: NavItem[] = [
     icon: TrendingUp,
   },
   {
+    id: "you",
+    label: "You",
+    description: "Your private visual timeline — photos, weight, face and body changes",
+    icon: Camera,
+  },
+  {
     id: "community",
-    label: "Face Progress Community",
-    description: "Share and see how faces change during treatment — anonymously",
+    label: "Community",
+    description: "Share your progress and support each other — anonymously",
     icon: Users,
   },
   {

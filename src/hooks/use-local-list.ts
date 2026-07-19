@@ -27,5 +27,16 @@ export function useLocalList<T extends { id: string }>(key: string) {
     [key],
   );
 
-  return { list, add, remove };
+  const update = useCallback(
+    (id: string, patch: Partial<T>) => {
+      setList((prev) => {
+        const next = prev.map((item) => (item.id === id ? { ...item, ...patch } : item));
+        if (!saveList(key, next)) return prev;
+        return next;
+      });
+    },
+    [key],
+  );
+
+  return { list, add, remove, update };
 }

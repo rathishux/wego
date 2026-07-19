@@ -3,12 +3,13 @@ import * as React from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { getSupabase } from "@/lib/supabase";
 
-type EntryTableType = "dose" | "weight" | "glucose" | "food" | "progress_photo";
+type EntryTableType = "dose" | "weight" | "glucose" | "food" | "progress_photo" | "you_post";
 
 interface CloudListResult<T> {
   list: T[];
   add: (entry: T) => void;
   remove: (id: string) => void;
+  update: (id: string, patch: Partial<T>) => void;
   loading: boolean;
   error: string | null;
 }
@@ -94,5 +95,34 @@ export function useCloudList<T extends { id: string; date?: string; createdAt: n
     [user, list],
   );
 
-  return { list, add, remove, loading, error };
+  const update = React.useCallback(
+    (id: string, patch: Partial<T>) => {
+      if (!user) return;
+      const prev = list;
+      let merged: T | undefined;
+      setList((p) =>
+        p.map((e) => {
+          if (e.id !== id) return e;
+          merged = { ...e, ...patch };
+          return merged;
+        }),
+      );
+      if (!merged) return;
+      const supabase = getSupabase();
+      supabase
+        .from("entries")
+        .update({ data: merged })
+        .eq("id", id)
+        .eq("user_id", user.id)
+        .then(({ error: updateError }) => {
+          if (updateError) {
+            setError(updateError.message);
+            setList(prev);
+          }
+        });
+    },
+    [user, list],
+  );
+
+  return { list, add, remove, update, loading, error };
 }

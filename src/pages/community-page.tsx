@@ -81,6 +81,12 @@ export function CommunityPage() {
     }
   }
 
+  function handleCommentCountChange(postId: string, delta: number) {
+    setPosts((prev) =>
+      prev.map((p) => (p.id === postId ? { ...p, commentCount: Math.max(0, p.commentCount + delta) } : p)),
+    );
+  }
+
   return (
     <div className="flex flex-col gap-6">
       {!isSupabaseConfigured && (
@@ -104,7 +110,7 @@ export function CommunityPage() {
         <p className="text-destructive text-sm">Couldn't load the community feed: {loadError}</p>
       ) : posts.length === 0 ? (
         <p className="text-muted-foreground text-sm">
-          No posts yet. Be the first to share how treatment is changing your appearance.
+          No posts yet. Be the first to share how it's going — a photo, an update, or both.
         </p>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -115,6 +121,7 @@ export function CommunityPage() {
               onToggleReaction={handleToggleReaction}
               onDelete={handleDelete}
               onReport={handleReport}
+              onCommentCountChange={handleCommentCountChange}
             />
           ))}
         </div>

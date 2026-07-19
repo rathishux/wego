@@ -49,6 +49,15 @@ export interface ProgressPhoto {
   photo: string;
 }
 
+export interface YouPost {
+  id: string;
+  createdAt: number;
+  photo: string;
+  title?: string;
+  description?: string;
+  sharedPostId?: string;
+}
+
 export interface FeedItem {
   type: LogType;
   id: string;
