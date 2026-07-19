@@ -174,53 +174,56 @@ export function CommunityPostCard({
   const [commentsOpen, setCommentsOpen] = React.useState(false);
 
   return (
-    <Card className="overflow-hidden py-0">
-      {post.photo && <img src={post.photo} alt="" className="aspect-square w-full object-cover" />}
-      <CardContent className="flex flex-col gap-3 py-4">
-        <div className="flex items-center gap-2.5">
-          <CommunityAvatar seed={post.avatarSeed} />
-          <div className="min-w-0 flex-1">
-            <p className="truncate text-sm font-medium">{post.pseudonym}</p>
-            <p className="text-muted-foreground text-xs">{formatRelativeTime(post.createdAt)}</p>
-          </div>
+    <Card className="gap-0 overflow-hidden py-0">
+      <div className="flex items-center gap-2.5 px-3 py-2.5">
+        <CommunityAvatar seed={post.avatarSeed} />
+        <div className="min-w-0 flex-1">
+          <p className="truncate text-sm font-medium">{post.pseudonym}</p>
+          <p className="text-muted-foreground text-xs">{formatRelativeTime(post.createdAt)}</p>
         </div>
+        {post.mine ? (
+          <Button
+            variant="ghost"
+            size="icon"
+            className="text-destructive hover:bg-destructive/10 hover:text-destructive size-8 shrink-0"
+            aria-label="Delete post"
+            onClick={() => onDelete(post.id)}
+          >
+            <Trash2 className="size-4" />
+          </Button>
+        ) : (
+          <ReportButton onReport={(reason) => onReport(post.id, reason)} />
+        )}
+      </div>
 
-        {post.caption && <p className="text-sm whitespace-pre-wrap">{post.caption}</p>}
+      {post.photo && <img src={post.photo} alt="" className="aspect-square w-full object-cover" />}
 
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-1">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => onToggleReaction(post.id)}
-              className={cn("gap-1.5", post.reactedByMe && "text-destructive")}
-            >
-              <Heart className={cn("size-4", post.reactedByMe && "fill-current")} />
-              {post.reactionCount > 0 ? post.reactionCount : "Support"}
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="text-muted-foreground gap-1.5"
-              onClick={() => setCommentsOpen((v) => !v)}
-            >
-              <MessageCircle className="size-4" />
-              {post.commentCount > 0 ? post.commentCount : "Reply"}
-            </Button>
-          </div>
+      <CardContent className="flex flex-col gap-2 py-3">
+        {post.caption && (
+          <p className="text-sm whitespace-pre-wrap">
+            <span className="font-medium">{post.pseudonym}</span> {post.caption}
+          </p>
+        )}
 
-          {post.mine ? (
-            <Button
-              variant="ghost"
-              size="sm"
-              className="text-destructive hover:bg-destructive/10 hover:text-destructive gap-1.5"
-              onClick={() => onDelete(post.id)}
-            >
-              <Trash2 className="size-4" /> Delete
-            </Button>
-          ) : (
-            <ReportButton onReport={(reason) => onReport(post.id, reason)} />
-          )}
+        <div className="-ml-2 flex items-center gap-1">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => onToggleReaction(post.id)}
+            className={cn("gap-1.5", post.reactedByMe && "text-destructive")}
+          >
+            <Heart className={cn("size-4", post.reactedByMe && "fill-current")} />
+            {post.reactionCount > 0 ? post.reactionCount : "Support"}
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="text-muted-foreground gap-1.5"
+            onClick={() => setCommentsOpen((v) => !v)}
+          >
+            <MessageCircle className="size-4" />
+            {post.commentCount > 0 ? post.commentCount : "Reply"}
+          </Button>
         </div>
 
         {commentsOpen && (

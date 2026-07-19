@@ -1,9 +1,19 @@
+import { Plus } from "lucide-react";
 import * as React from "react";
 import { toast } from "sonner";
 
 import { CommunityConsentDialog } from "@/components/app/community-consent-dialog";
 import { YouPostForm } from "@/components/app/forms/you-post-form";
 import { YouTimeline } from "@/components/app/you-timeline";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { useCommunityConsent } from "@/hooks/use-community-consent";
 import { useEntries } from "@/hooks/use-entries";
 import { communityBackend } from "@/lib/community";
@@ -15,6 +25,12 @@ export function YouPage() {
   const [consentOpen, setConsentOpen] = React.useState(false);
   const [pendingShare, setPendingShare] = React.useState<YouPost | null>(null);
   const [sharing, setSharing] = React.useState<string | null>(null);
+  const [composerOpen, setComposerOpen] = React.useState(false);
+
+  function handleAdd(post: YouPost) {
+    add(post);
+    setComposerOpen(false);
+  }
 
   async function shareToCommunity(post: YouPost) {
     setSharing(post.id);
@@ -48,9 +64,33 @@ export function YouPage() {
   }
 
   return (
-    <div className="flex flex-col gap-6">
-      <YouPostForm onAdd={add} />
+    <div className="mx-auto flex w-full max-w-xl flex-col gap-4">
+      <p className="text-muted-foreground text-sm">
+        Private by default — visible only to you unless you share it.
+      </p>
+
       <YouTimeline posts={posts} onDelete={remove} onShare={handleShareClick} sharing={sharing} />
+
+      <Dialog open={composerOpen} onOpenChange={setComposerOpen}>
+        <DialogTrigger asChild>
+          <Button
+            size="icon"
+            className="fixed right-6 bottom-6 z-40 size-14 rounded-full shadow-lg"
+            aria-label="New entry"
+          >
+            <Plus className="size-6" />
+          </Button>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>New entry</DialogTitle>
+            <DialogDescription>
+              Private by default — visible only to you unless you share it.
+            </DialogDescription>
+          </DialogHeader>
+          <YouPostForm onAdd={handleAdd} />
+        </DialogContent>
+      </Dialog>
 
       <CommunityConsentDialog
         open={consentOpen}
