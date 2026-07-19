@@ -3,7 +3,6 @@ import { toast } from "sonner";
 
 import { PhotoCaptureButton } from "@/components/app/photo-capture-button";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
 import type { CreatePostInput } from "@/lib/community";
@@ -13,9 +12,10 @@ const CAPTION_MAX = 280;
 interface CommunityComposerProps {
   onSubmit: (input: CreatePostInput) => Promise<void>;
   onRequireConsent: () => boolean;
+  onPosted?: () => void;
 }
 
-export function CommunityComposer({ onSubmit, onRequireConsent }: CommunityComposerProps) {
+export function CommunityComposer({ onSubmit, onRequireConsent, onPosted }: CommunityComposerProps) {
   const [photo, setPhoto] = React.useState<string>();
   const [caption, setCaption] = React.useState("");
   const [acknowledged, setAcknowledged] = React.useState(false);
@@ -34,6 +34,7 @@ export function CommunityComposer({ onSubmit, onRequireConsent }: CommunityCompo
       setCaption("");
       setAcknowledged(false);
       toast.success("Posted to the community.");
+      onPosted?.();
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Couldn't post right now.");
     } finally {
@@ -42,54 +43,46 @@ export function CommunityComposer({ onSubmit, onRequireConsent }: CommunityCompo
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="text-base">Share with the community</CardTitle>
-        <p className="text-muted-foreground text-sm">
-          Progress, a win, a rough day — with or without a photo. Visible publicly, anonymously.
-        </p>
-      </CardHeader>
-      <CardContent className="flex flex-col gap-4">
-        {photo ? (
-          <div className="relative w-fit">
-            <img src={photo} alt="" className="h-40 w-40 rounded-lg border object-cover" />
-            <Button
-              type="button"
-              variant="secondary"
-              size="sm"
-              className="absolute -top-2 -right-2 h-7 rounded-full px-2"
-              onClick={() => setPhoto(undefined)}
-            >
-              Remove
-            </Button>
-          </div>
-        ) : (
-          <PhotoCaptureButton onCapture={setPhoto} facingMode="user" />
-        )}
+    <div className="flex flex-col gap-4">
+      {photo ? (
+        <div className="relative w-fit">
+          <img src={photo} alt="" className="h-40 w-40 rounded-lg border object-cover" />
+          <Button
+            type="button"
+            variant="secondary"
+            size="sm"
+            className="absolute -top-2 -right-2 h-7 rounded-full px-2"
+            onClick={() => setPhoto(undefined)}
+          >
+            Remove
+          </Button>
+        </div>
+      ) : (
+        <PhotoCaptureButton onCapture={setPhoto} facingMode="user" />
+      )}
 
-        <Textarea
-          value={caption}
-          onChange={(e) => setCaption(e.target.value.slice(0, CAPTION_MAX))}
-          placeholder="What's on your mind? Progress, a win, motivation for others…"
-          maxLength={CAPTION_MAX}
+      <Textarea
+        value={caption}
+        onChange={(e) => setCaption(e.target.value.slice(0, CAPTION_MAX))}
+        placeholder="What's on your mind? Progress, a win, motivation for others…"
+        maxLength={CAPTION_MAX}
+      />
+      <p className="text-muted-foreground -mt-3 text-right text-xs">
+        {caption.length}/{CAPTION_MAX}
+      </p>
+
+      <label className="flex items-start gap-2.5 text-sm">
+        <Checkbox
+          checked={acknowledged}
+          onCheckedChange={(v) => setAcknowledged(v === true)}
+          className="mt-0.5"
         />
-        <p className="text-muted-foreground -mt-3 text-right text-xs">
-          {caption.length}/{CAPTION_MAX}
-        </p>
+        I understand this post will be public and anonymous.
+      </label>
 
-        <label className="flex items-start gap-2.5 text-sm">
-          <Checkbox
-            checked={acknowledged}
-            onCheckedChange={(v) => setAcknowledged(v === true)}
-            className="mt-0.5"
-          />
-          I understand this post will be public and anonymous.
-        </label>
-
-        <Button onClick={handlePost} disabled={!canPost} className="self-start">
-          {posting ? "Posting…" : "Post to community"}
-        </Button>
-      </CardContent>
-    </Card>
+      <Button onClick={handlePost} disabled={!canPost} className="self-start">
+        {posting ? "Posting…" : "Post to community"}
+      </Button>
+    </div>
   );
 }

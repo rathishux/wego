@@ -1,11 +1,20 @@
-import { Info } from "lucide-react";
+import { Info, Plus } from "lucide-react";
 import * as React from "react";
 import { toast } from "sonner";
 
 import { CommunityComposer } from "@/components/app/community-composer";
 import { CommunityConsentDialog } from "@/components/app/community-consent-dialog";
 import { CommunityPostCard } from "@/components/app/community-post-card";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { useCommunityConsent } from "@/hooks/use-community-consent";
 import { communityBackend, isSupabaseConfigured, type CommunityPost, type CreatePostInput, type ReportReason } from "@/lib/community";
 
@@ -15,6 +24,7 @@ export function CommunityPage() {
   const [posts, setPosts] = React.useState<CommunityPost[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [loadError, setLoadError] = React.useState<string | null>(null);
+  const [composerOpen, setComposerOpen] = React.useState(false);
 
   const loadFeed = React.useCallback(async () => {
     setLoading(true);
@@ -88,7 +98,7 @@ export function CommunityPage() {
   }
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="mx-auto flex w-full max-w-xl flex-col gap-4">
       {!isSupabaseConfigured && (
         <Card className="border-warning/40 bg-warning/10">
           <CardContent className="flex items-start gap-2.5 py-4 text-sm">
@@ -102,18 +112,16 @@ export function CommunityPage() {
         </Card>
       )}
 
-      <CommunityComposer onSubmit={handleCreatePost} onRequireConsent={requireConsent} />
-
       {loading ? (
         <p className="text-muted-foreground text-sm">Loading community posts…</p>
       ) : loadError ? (
         <p className="text-destructive text-sm">Couldn't load the community feed: {loadError}</p>
       ) : posts.length === 0 ? (
         <p className="text-muted-foreground text-sm">
-          No posts yet. Be the first to share how it's going — a photo, an update, or both.
+          No posts yet. Tap "New post" to be the first to share how it's going.
         </p>
       ) : (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="flex flex-col gap-4">
           {posts.map((post) => (
             <CommunityPostCard
               key={post.id}
@@ -126,6 +134,27 @@ export function CommunityPage() {
           ))}
         </div>
       )}
+
+      <Dialog open={composerOpen} onOpenChange={setComposerOpen}>
+        <DialogTrigger asChild>
+          <Button size="icon" className="fixed right-6 bottom-6 z-40 size-14 rounded-full shadow-lg" aria-label="New post">
+            <Plus className="size-6" />
+          </Button>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Share with the community</DialogTitle>
+            <DialogDescription>
+              Progress, a win, a rough day — with or without a photo. Visible publicly, anonymously.
+            </DialogDescription>
+          </DialogHeader>
+          <CommunityComposer
+            onSubmit={handleCreatePost}
+            onRequireConsent={requireConsent}
+            onPosted={() => setComposerOpen(false)}
+          />
+        </DialogContent>
+      </Dialog>
 
       <CommunityConsentDialog
         open={consentOpen}
