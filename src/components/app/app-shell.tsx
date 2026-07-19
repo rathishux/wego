@@ -2,7 +2,7 @@ import { Menu } from "lucide-react";
 import * as React from "react";
 
 import { AppSidebar } from "@/components/app/app-sidebar";
-import { NAV_ITEMS, type PageId } from "@/components/app/nav-items";
+import { NAV_ITEMS, SECONDARY_ITEMS, type PageId } from "@/components/app/nav-items";
 import { ThemeToggle } from "@/components/app/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
@@ -16,7 +16,8 @@ interface AppShellProps {
 
 export function AppShell({ active, onNavigate, children }: AppShellProps) {
   const [mobileOpen, setMobileOpen] = React.useState(false);
-  const activeItem = NAV_ITEMS.find((item) => item.id === active) ?? NAV_ITEMS[0];
+  const activeItem =
+    [...NAV_ITEMS, ...SECONDARY_ITEMS].find((item) => item.id === active) ?? NAV_ITEMS[0];
 
   return (
     <div className="bg-background flex min-h-svh w-full">

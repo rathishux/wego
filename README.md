@@ -47,6 +47,7 @@ The **Face Progress Community** is always the one exception to "your data stays 
 - **You** — a private, Instagram-style visual timeline: post a photo with a title and description to track how your face, body, and weight are changing. Private by default; any entry can optionally be shared to Community (see below)
 - **Community** — an opt-in, anonymous space to share progress, wins, and motivation — with or without a photo — and support each other (see below)
 - **Tips** — static, non-personalized guidance and safety boundaries
+- **Settings** (via the account menu) — account info and sign-out, appearance (light/dark/system), and links to the Privacy Policy and Terms & Conditions. Reachable in both local-only and cloud-synced mode.
 
 ## Account & cloud sync
 
@@ -108,7 +109,7 @@ There's no in-app admin panel yet. Reported/auto-hidden posts and comments can b
 
 ## Structure
 
-- `src/pages/` — the top-level screens (Dashboard, Log entry, Progress, You, Community, Tips) plus `login-page.tsx`
+- `src/pages/` — the top-level screens (Dashboard, Log entry, Progress, You, Community, Tips, Settings, Privacy Policy, Terms & Conditions) plus `login-page.tsx`
 - `src/components/app/` — app-specific components (sidebar/shell, photo capture, entry forms/lists, You timeline, Community UI including comments)
 - `src/components/ui/` — shadcn/ui primitives
 - `src/lib/` — types, `localStorage` persistence, and shared formatting helpers

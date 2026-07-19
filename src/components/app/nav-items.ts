@@ -1,6 +1,26 @@
-import { BookOpenText, Camera, LayoutDashboard, ListPlus, TrendingUp, Users, type LucideIcon } from "lucide-react";
+import {
+  BookOpenText,
+  Camera,
+  FileText,
+  LayoutDashboard,
+  ListPlus,
+  Settings,
+  ShieldCheck,
+  TrendingUp,
+  Users,
+  type LucideIcon,
+} from "lucide-react";
 
-export type PageId = "dashboard" | "log" | "progress" | "you" | "community" | "tips";
+export type PageId =
+  | "dashboard"
+  | "log"
+  | "progress"
+  | "you"
+  | "community"
+  | "tips"
+  | "settings"
+  | "privacy"
+  | "terms";
 
 export interface NavItem {
   id: PageId;
@@ -45,5 +65,27 @@ export const NAV_ITEMS: NavItem[] = [
     label: "Tips",
     description: "General guidance — not medical advice",
     icon: BookOpenText,
+  },
+];
+
+// Reachable from the account menu / Settings, not shown in the main sidebar nav.
+export const SECONDARY_ITEMS: NavItem[] = [
+  {
+    id: "settings",
+    label: "Settings",
+    description: "Account, appearance, and app info",
+    icon: Settings,
+  },
+  {
+    id: "privacy",
+    label: "Privacy Policy",
+    description: "What data Steady stores and how it's used",
+    icon: ShieldCheck,
+  },
+  {
+    id: "terms",
+    label: "Terms & Conditions",
+    description: "Rules for using Steady",
+    icon: FileText,
   },
 ];
