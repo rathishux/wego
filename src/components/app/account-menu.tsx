@@ -1,6 +1,7 @@
 import type { User } from "@supabase/supabase-js";
-import { ChevronsUpDown, LogOut } from "lucide-react";
+import { ChevronsUpDown, FileText, LogOut, Settings, ShieldCheck } from "lucide-react";
 
+import type { PageId } from "@/components/app/nav-items";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,14 +13,15 @@ import {
 import { seedToHue } from "@/lib/community";
 
 interface AccountMenuProps {
-  user: User;
-  onSignOut: () => void;
+  user: User | null;
+  onNavigate: (id: PageId) => void;
+  onSignOut?: () => void;
 }
 
-export function AccountMenu({ user, onSignOut }: AccountMenuProps) {
-  const email = user.email ?? "Signed in";
-  const hue = seedToHue(user.id);
-  const initial = email.trim()[0]?.toUpperCase() ?? "?";
+export function AccountMenu({ user, onNavigate, onSignOut }: AccountMenuProps) {
+  const email = user?.email;
+  const hue = user ? seedToHue(user.id) : 210;
+  const initial = email?.trim()[0]?.toUpperCase() ?? "S";
 
   return (
     <DropdownMenu>
@@ -37,21 +39,44 @@ export function AccountMenu({ user, onSignOut }: AccountMenuProps) {
           >
             {initial}
           </div>
-          <span className="min-w-0 flex-1 truncate text-sm font-medium">{email}</span>
+          <span className="min-w-0 flex-1 truncate text-sm font-medium">Account</span>
           <ChevronsUpDown className="text-muted-foreground size-4 shrink-0" />
         </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" side="top" className="w-56">
+      <DropdownMenuContent align="end" side="top" className="w-64">
         <DropdownMenuLabel className="text-muted-foreground truncate text-xs font-normal">
-          Signed in as
-          <br />
-          <span className="text-foreground font-medium">{email}</span>
+          {email ? (
+            <>
+              Signed in as
+              <br />
+              <span className="text-foreground font-medium">{email}</span>
+            </>
+          ) : (
+            "Private · on this device only"
+          )}
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem variant="destructive" onClick={onSignOut}>
-          <LogOut />
-          Sign out
+        <DropdownMenuItem onClick={() => onNavigate("settings")}>
+          <Settings />
+          Settings
         </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => onNavigate("privacy")}>
+          <ShieldCheck />
+          Privacy Policy
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => onNavigate("terms")}>
+          <FileText />
+          Terms & Conditions
+        </DropdownMenuItem>
+        {onSignOut && (
+          <>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem variant="destructive" onClick={onSignOut}>
+              <LogOut />
+              Sign out
+            </DropdownMenuItem>
+          </>
+        )}
       </DropdownMenuContent>
     </DropdownMenu>
   );

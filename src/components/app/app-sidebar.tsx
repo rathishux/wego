@@ -2,7 +2,6 @@ import { Leaf } from "lucide-react";
 
 import { AccountMenu } from "@/components/app/account-menu";
 import { NAV_ITEMS, type PageId } from "@/components/app/nav-items";
-import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/hooks/use-auth";
 import { cn } from "@/lib/utils";
 
@@ -13,6 +12,7 @@ interface AppSidebarProps {
 
 export function AppSidebar({ active, onNavigate }: AppSidebarProps) {
   const { cloudEnabled, user, signOut } = useAuth();
+  const signedIn = cloudEnabled && user;
 
   return (
     <div className="flex h-full flex-col gap-6 p-4">
@@ -49,13 +49,11 @@ export function AppSidebar({ active, onNavigate }: AppSidebarProps) {
       </nav>
 
       <div className="mt-auto px-1">
-        {cloudEnabled && user ? (
-          <AccountMenu user={user} onSignOut={() => signOut()} />
-        ) : (
-          <Badge variant="secondary" className="mx-1 w-fit">
-            Private · on this device only
-          </Badge>
-        )}
+        <AccountMenu
+          user={signedIn ? user : null}
+          onNavigate={onNavigate}
+          onSignOut={signedIn ? () => signOut() : undefined}
+        />
       </div>
     </div>
   );

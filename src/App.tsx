@@ -18,6 +18,13 @@ const CommunityPage = React.lazy(() =>
   import("@/pages/community-page").then((m) => ({ default: m.CommunityPage })),
 );
 const YouPage = React.lazy(() => import("@/pages/you-page").then((m) => ({ default: m.YouPage })));
+const SettingsPage = React.lazy(() =>
+  import("@/pages/settings-page").then((m) => ({ default: m.SettingsPage })),
+);
+const PrivacyPolicyPage = React.lazy(() =>
+  import("@/pages/privacy-policy-page").then((m) => ({ default: m.PrivacyPolicyPage })),
+);
+const TermsPage = React.lazy(() => import("@/pages/terms-page").then((m) => ({ default: m.TermsPage })));
 
 export default function App() {
   const { cloudEnabled, user, loading } = useAuth();
@@ -80,6 +87,21 @@ function MainApp() {
         </React.Suspense>
       )}
       {page === "tips" && <TipsPage />}
+      {page === "settings" && (
+        <React.Suspense fallback={null}>
+          <SettingsPage onNavigate={navigate} />
+        </React.Suspense>
+      )}
+      {page === "privacy" && (
+        <React.Suspense fallback={null}>
+          <PrivacyPolicyPage onNavigate={navigate} />
+        </React.Suspense>
+      )}
+      {page === "terms" && (
+        <React.Suspense fallback={null}>
+          <TermsPage onNavigate={navigate} />
+        </React.Suspense>
+      )}
     </AppShell>
   );
 }
