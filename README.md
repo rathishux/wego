@@ -68,6 +68,8 @@ In addition to the Community feature's setup (below), run one more script:
 
 No new environment variables are needed — it reuses `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY` from the Community setup.
 
+**If you set up `entries` before 2026-07-18** (i.e. your project already existed when this README said `id uuid primary key`): also run `supabase/schema_fix_entries_id.sql` once — it corrects the already-created column to the right type. New projects don't need this; `schema_accounts.sql` already creates the column correctly. If you ever see a save fail with `invalid input syntax for type uuid`, this is the fix — it's safe to run again.
+
 **Heads up:** once this is configured on your deployed site, the whole app will require signing in from then on — there's no way to use the cloud-synced build without an account. If you want to keep using the app with no login at all, simply don't configure these two environment variables (or remove them) and it stays in local-only mode.
 
 ## You
