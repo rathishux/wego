@@ -1,7 +1,9 @@
-import { Camera, Check, Share2, Trash2 } from "lucide-react";
+import { Camera, Check, Share, Share2, Trash2 } from "lucide-react";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { shareNative } from "@/lib/share";
 import { formatRelativeTime } from "@/lib/storage";
 import type { YouPost } from "@/lib/types";
 
@@ -10,6 +12,19 @@ interface YouTimelineProps {
   onDelete: (id: string) => void;
   onShare: (post: YouPost) => void;
   sharing: string | null;
+}
+
+async function handleDeviceShare(post: YouPost) {
+  try {
+    await shareNative({
+      photo: post.photo,
+      title: post.title,
+      text: post.description,
+    });
+  } catch (err) {
+    if (err instanceof DOMException && err.name === "AbortError") return;
+    toast.error(err instanceof Error ? err.message : "Couldn't open the share sheet.");
+  }
 }
 
 export function YouTimeline({ posts, onDelete, onShare, sharing }: YouTimelineProps) {
@@ -58,22 +73,33 @@ export function YouTimeline({ posts, onDelete, onShare, sharing }: YouTimelinePr
                 </p>
               )}
 
-              {post.sharedPostId ? (
-                <span className="text-muted-foreground inline-flex items-center gap-1.5 text-xs">
-                  <Check className="size-3.5" /> Shared to Community
-                </span>
-              ) : (
+              <div className="flex items-center gap-2">
+                {post.sharedPostId ? (
+                  <span className="text-muted-foreground inline-flex items-center gap-1.5 text-xs">
+                    <Check className="size-3.5" /> Shared to Community
+                  </span>
+                ) : (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="gap-1.5"
+                    disabled={sharing === post.id}
+                    onClick={() => onShare(post)}
+                  >
+                    <Share2 className="size-3.5" />
+                    {sharing === post.id ? "Sharing…" : "Share to Community"}
+                  </Button>
+                )}
                 <Button
                   variant="ghost"
-                  size="sm"
-                  className="text-muted-foreground -ml-2 w-fit gap-1.5"
-                  disabled={sharing === post.id}
-                  onClick={() => onShare(post)}
+                  size="icon"
+                  className="text-muted-foreground size-8 shrink-0"
+                  aria-label="Share to other apps"
+                  onClick={() => handleDeviceShare(post)}
                 >
-                  <Share2 className="size-3.5" />
-                  {sharing === post.id ? "Sharing…" : "Share to Community"}
+                  <Share className="size-4" />
                 </Button>
-              )}
+              </div>
             </CardContent>
           </Card>
         ))}
