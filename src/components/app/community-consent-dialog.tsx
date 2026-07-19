@@ -40,23 +40,26 @@ export function CommunityConsentDialog({ open, onOpenChange, onAgree }: Communit
           <div className="flex gap-2.5">
             <Eye className="text-muted-foreground mt-0.5 size-4 shrink-0" />
             <p>
-              <strong>Your face may still be recognizable in the photo itself</strong>, even though your
-              account is anonymous. Only share a photo you're comfortable with others seeing.
+              <strong>If you include a photo, your face may still be recognizable</strong>, even though
+              your account is anonymous. Only share a photo you're comfortable with others seeing.
             </p>
           </div>
           <div className="flex gap-2.5">
             <ShieldCheck className="text-muted-foreground mt-0.5 size-4 shrink-0" />
-            <p>You can delete any post you've made at any time.</p>
+            <p>You can delete any post or comment you've made at any time.</p>
           </div>
           <div className="flex gap-2.5">
             <MessageCircleWarning className="text-muted-foreground mt-0.5 size-4 shrink-0" />
-            <p>Posts that get reported for mocking or harassment are automatically hidden pending review.</p>
+            <p>
+              Other members can reply to your posts. Any post or comment reported for mocking or
+              harassment is automatically hidden pending review.
+            </p>
           </div>
         </div>
 
         <label className="bg-muted flex items-start gap-2.5 rounded-lg p-3 text-sm">
           <Checkbox checked={checked} onCheckedChange={(v) => setChecked(v === true)} className="mt-0.5" />
-          I understand my posts will be public and I won't include identifying details.
+          I understand my posts and comments will be public and I won't include identifying details.
         </label>
 
         <DialogFooter>

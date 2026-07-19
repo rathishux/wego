@@ -17,6 +17,7 @@ const ProgressPage = React.lazy(() =>
 const CommunityPage = React.lazy(() =>
   import("@/pages/community-page").then((m) => ({ default: m.CommunityPage })),
 );
+const YouPage = React.lazy(() => import("@/pages/you-page").then((m) => ({ default: m.YouPage })));
 
 export default function App() {
   const { cloudEnabled, user, loading } = useAuth();
@@ -66,6 +67,11 @@ function MainApp() {
       {page === "progress" && (
         <React.Suspense fallback={null}>
           <ProgressPage />
+        </React.Suspense>
+      )}
+      {page === "you" && (
+        <React.Suspense fallback={null}>
+          <YouPage />
         </React.Suspense>
       )}
       {page === "community" && (

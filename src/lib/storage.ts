@@ -7,6 +7,7 @@ export const KEYS = {
   food: STORAGE_PREFIX + "food",
   markers: STORAGE_PREFIX + "markers",
   progressPhotos: STORAGE_PREFIX + "progressPhotos",
+  youPosts: STORAGE_PREFIX + "youPosts",
 } as const;
 
 const LEGACY_FACE_PHOTO_KEY = STORAGE_PREFIX + "markers.face";

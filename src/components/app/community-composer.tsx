@@ -8,7 +8,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
 import type { CreatePostInput } from "@/lib/community";
 
-const CAPTION_MAX = 140;
+const CAPTION_MAX = 280;
 
 interface CommunityComposerProps {
   onSubmit: (input: CreatePostInput) => Promise<void>;
@@ -21,10 +21,11 @@ export function CommunityComposer({ onSubmit, onRequireConsent }: CommunityCompo
   const [acknowledged, setAcknowledged] = React.useState(false);
   const [posting, setPosting] = React.useState(false);
 
-  const canPost = Boolean(photo) && acknowledged && !posting;
+  const hasContent = Boolean(photo) || caption.trim().length > 0;
+  const canPost = hasContent && acknowledged && !posting;
 
   async function handlePost() {
-    if (!photo) return;
+    if (!hasContent) return;
     if (!onRequireConsent()) return;
     setPosting(true);
     try {
@@ -43,9 +44,9 @@ export function CommunityComposer({ onSubmit, onRequireConsent }: CommunityCompo
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-base">Share your progress</CardTitle>
+        <CardTitle className="text-base">Share with the community</CardTitle>
         <p className="text-muted-foreground text-sm">
-          Visible publicly, anonymously — no name or personal details attached
+          Progress, a win, a rough day — with or without a photo. Visible publicly, anonymously.
         </p>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
@@ -69,7 +70,7 @@ export function CommunityComposer({ onSubmit, onRequireConsent }: CommunityCompo
         <Textarea
           value={caption}
           onChange={(e) => setCaption(e.target.value.slice(0, CAPTION_MAX))}
-          placeholder="Optional caption — e.g. how you're feeling about the change (optional)"
+          placeholder="What's on your mind? Progress, a win, motivation for others…"
           maxLength={CAPTION_MAX}
         />
         <p className="text-muted-foreground -mt-3 text-right text-xs">
@@ -82,7 +83,7 @@ export function CommunityComposer({ onSubmit, onRequireConsent }: CommunityCompo
             onCheckedChange={(v) => setAcknowledged(v === true)}
             className="mt-0.5"
           />
-          I understand this photo will be posted publicly and anonymously.
+          I understand this post will be public and anonymous.
         </label>
 
         <Button onClick={handlePost} disabled={!canPost} className="self-start">
