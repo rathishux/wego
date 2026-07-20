@@ -4,8 +4,11 @@ import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 import { VitePWA } from "vite-plugin-pwa";
 
+// GitHub Pages serves this app from /wego/; Vercel serves it from the domain root.
+const base = process.env.VERCEL ? "/" : "/wego/";
+
 export default defineConfig({
-  base: "/wego/",
+  base,
   plugins: [
     react(),
     tailwindcss(),
@@ -19,8 +22,8 @@ export default defineConfig({
         theme_color: "#1f6f50",
         background_color: "#f4f6f5",
         display: "standalone",
-        start_url: "/wego/",
-        scope: "/wego/",
+        start_url: base,
+        scope: base,
         icons: [
           {
             src: "icon.svg",
