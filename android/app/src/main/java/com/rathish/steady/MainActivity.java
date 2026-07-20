@@ -1,4 +1,4 @@
-package com.steady.app;
+package com.rathish.steady;
 
 import com.getcapacitor.BridgeActivity;
 

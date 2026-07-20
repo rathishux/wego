@@ -122,7 +122,7 @@ Steady wraps the same web app in a native shell using [Capacitor](https://capaci
 
 This repo includes the Capacitor config and the generated `android/` and `ios/` native projects, ready to open in Android Studio / Xcode. What it can't do from this environment: **actually compile a signed app or publish to a store** — that needs the Android SDK / Xcode toolchains and your own developer accounts, none of which exist here. Concretely, that means:
 
-1. **Pick your own app ID.** `capacitor.config.ts` ships with a placeholder `appId: "com.steady.app"`. Change it to your own reverse-domain identifier (e.g. `com.yourname.steady`) *before* you first build — it can't be changed later without publishing as a new app.
+1. **App ID.** `capacitor.config.ts` is set to `appId: "com.rathish.steady"`. If you want a different reverse-domain identifier, change it *before* you first build — it can't be changed later without publishing as a new app. (It's set in `capacitor.config.ts`, `android/app/build.gradle`, `android/app/src/main/res/values/strings.xml`, the `android/app/src/main/java/...` package path, and `PRODUCT_BUNDLE_IDENTIFIER` in `ios/App/App.xcodeproj/project.pbxproj` — all need to stay in sync.)
 2. **Replace the placeholder icon/splash.** `resources/icon.png` and `resources/splash.png` were generated from the existing app icon as a starting point (and still have the icon's rounded corners baked in, so it'll double-round on iOS). Swap in a proper 1024×1024 square icon, then run:
    ```
    npx @capacitor/assets generate --iconBackgroundColor '#1f6f50' --iconBackgroundColorDark '#132a20' --splashBackgroundColor '#fafaf5' --splashBackgroundColorDark '#17231c'

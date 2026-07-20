@@ -1,10 +1,10 @@
 apply plugin: 'com.android.application'
 
 android {
-    namespace = "com.steady.app"
+    namespace = "com.rathish.steady"
     compileSdk = rootProject.ext.compileSdkVersion
     defaultConfig {
-        applicationId "com.steady.app"
+        applicationId "com.rathish.steady"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

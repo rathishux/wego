@@ -1,10 +1,8 @@
 import type { CapacitorConfig } from "@capacitor/cli";
 
-// appId is a placeholder — replace with your own reverse-domain identifier
-// (e.g. com.yourcompany.steady) before registering the app with Apple/Google.
-// It must be unique and can't be changed later without republishing as a new app.
+// appId must be unique and can't be changed later without republishing as a new app.
 const config: CapacitorConfig = {
-  appId: "com.steady.app",
+  appId: "com.rathish.steady",
   appName: "Steady",
   webDir: "dist",
   backgroundColor: "#fafaf5",
