@@ -27,6 +27,8 @@ const PrivacyPolicyPage = React.lazy(() =>
 );
 const TermsPage = React.lazy(() => import("@/pages/terms-page").then((m) => ({ default: m.TermsPage })));
 
+const PAGE_FALLBACK = <p className="text-muted-foreground text-sm">Loading…</p>;
+
 export default function App() {
   const { cloudEnabled, user, loading } = useAuth();
 
@@ -75,33 +77,33 @@ function MainApp() {
       {page === "dashboard" && <DashboardPage onNavigate={navigate} />}
       {page === "log" && <LogEntryPage initialTab={logTab} onNavigate={navigate} />}
       {page === "progress" && (
-        <React.Suspense fallback={null}>
+        <React.Suspense fallback={PAGE_FALLBACK}>
           <ProgressPage />
         </React.Suspense>
       )}
       {page === "you" && (
-        <React.Suspense fallback={null}>
+        <React.Suspense fallback={PAGE_FALLBACK}>
           <YouPage />
         </React.Suspense>
       )}
       {page === "community" && (
-        <React.Suspense fallback={null}>
+        <React.Suspense fallback={PAGE_FALLBACK}>
           <CommunityPage />
         </React.Suspense>
       )}
       {page === "tips" && <TipsPage />}
       {page === "settings" && (
-        <React.Suspense fallback={null}>
+        <React.Suspense fallback={PAGE_FALLBACK}>
           <SettingsPage onNavigate={navigate} />
         </React.Suspense>
       )}
       {page === "privacy" && (
-        <React.Suspense fallback={null}>
+        <React.Suspense fallback={PAGE_FALLBACK}>
           <PrivacyPolicyPage onNavigate={navigate} />
         </React.Suspense>
       )}
       {page === "terms" && (
-        <React.Suspense fallback={null}>
+        <React.Suspense fallback={PAGE_FALLBACK}>
           <TermsPage onNavigate={navigate} />
         </React.Suspense>
       )}
