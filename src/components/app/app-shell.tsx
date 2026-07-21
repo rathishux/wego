@@ -26,7 +26,7 @@ export function AppShell({ active, onNavigate, children }: AppShellProps) {
         </div>
       </aside>
 
-      <div className="flex min-h-svh flex-1 flex-col">
+      <div className="flex min-h-svh min-w-0 flex-1 flex-col">
         <header
           className="bg-background/80 sticky top-0 z-30 flex items-center gap-3 border-b px-4 py-3 backdrop-blur md:px-8"
           style={{ paddingTop: "max(0.75rem, env(safe-area-inset-top))" }}
