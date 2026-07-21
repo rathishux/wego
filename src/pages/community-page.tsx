@@ -103,7 +103,7 @@ export function CommunityPage() {
         <Card className="border-warning/40 bg-warning/10">
           <CardContent className="flex items-start gap-2.5 py-4 text-sm">
             <Info className="text-warning mt-0.5 size-4 shrink-0" />
-            <p>
+            <p className="min-w-0">
               <strong>Demo mode.</strong> No community backend is configured yet, so posts here are only
               visible on this device — they aren't actually shared with other users. See the README for how
               to connect a real backend.
