@@ -31,7 +31,7 @@ export function YouTimeline({ posts, onDelete, onShare, sharing }: YouTimelinePr
   if (posts.length === 0) {
     return (
       <p className="text-muted-foreground py-4 text-sm">
-        Nothing here yet. Tap "New entry" to start your timeline.
+        Nothing here yet. Tap "Add photo update" to start your timeline.
       </p>
     );
   }
