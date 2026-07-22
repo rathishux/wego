@@ -92,7 +92,7 @@ export function PrivacyPolicyPage({ onNavigate }: PrivacyPolicyPageProps) {
 
       <section>
         <h2>Contact</h2>
-        <p>Questions about this policy? Reach out at [your contact email].</p>
+        <p>Questions about this policy? Reach out at rathishuid@gmail.com.</p>
       </section>
     </LegalPageLayout>
   );

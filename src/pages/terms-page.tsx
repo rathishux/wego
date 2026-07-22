@@ -84,12 +84,12 @@ export function TermsPage({ onNavigate }: TermsPageProps) {
 
       <section>
         <h2>Governing law</h2>
-        <p>These terms are governed by the laws of [your jurisdiction].</p>
+        <p>These terms are governed by the laws of India.</p>
       </section>
 
       <section>
         <h2>Contact</h2>
-        <p>Questions about these terms? Reach out at [your contact email].</p>
+        <p>Questions about these terms? Reach out at rathishuid@gmail.com.</p>
       </section>
     </LegalPageLayout>
   );
