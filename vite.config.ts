@@ -16,8 +16,8 @@ export default defineConfig({
       registerType: "autoUpdate",
       includeAssets: ["icon.svg"],
       manifest: {
-        name: "Steady — Wegovy & Prediabetes Tracker",
-        short_name: "Steady",
+        name: "NivYou — Wegovy & Prediabetes Tracker",
+        short_name: "NivYou",
         description: "Private Wegovy and prediabetes tracking app",
         theme_color: "#1f6f50",
         background_color: "#f4f6f5",

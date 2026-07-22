@@ -47,7 +47,7 @@ export function SettingsPage({ onNavigate }: SettingsPageProps) {
             </>
           ) : (
             <p className="text-muted-foreground text-sm">
-              You're using Steady in local-only mode — everything stays on this device and there's no
+              You're using NivYou in local-only mode — everything stays on this device and there's no
               account. See the README for how to enable cloud sync.
             </p>
           )}

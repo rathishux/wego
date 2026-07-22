@@ -2,8 +2,8 @@ import type { CapacitorConfig } from "@capacitor/cli";
 
 // appId must be unique and can't be changed later without republishing as a new app.
 const config: CapacitorConfig = {
-  appId: "com.rathish.steady",
-  appName: "Steady",
+  appId: "com.rathish.nivyou",
+  appName: "NivYou",
   webDir: "dist",
   backgroundColor: "#fafaf5",
   ios: {

@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">Steady</string>
-    <string name="title_activity_main">Steady</string>
-    <string name="package_name">com.rathish.steady</string>
-    <string name="custom_url_scheme">com.rathish.steady</string>
+    <string name="app_name">NivYou</string>
+    <string name="title_activity_main">NivYou</string>
+    <string name="package_name">com.rathish.nivyou</string>
+    <string name="custom_url_scheme">com.rathish.nivyou</string>
 </resources>

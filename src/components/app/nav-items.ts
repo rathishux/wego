@@ -83,13 +83,13 @@ export const SECONDARY_ITEMS: NavItem[] = [
   {
     id: "privacy",
     label: "Privacy Policy",
-    description: "What data Steady stores and how it's used",
+    description: "What data NivYou stores and how it's used",
     icon: ShieldCheck,
   },
   {
     id: "terms",
     label: "Terms & Conditions",
-    description: "Rules for using Steady",
+    description: "Rules for using NivYou",
     icon: FileText,
   },
 ];

@@ -1,4 +1,4 @@
--- Steady: Face Progress Community schema
+-- NivYou: Face Progress Community schema
 -- Run this in the Supabase SQL editor for a fresh project.
 -- Requires anonymous sign-ins enabled: Authentication -> Providers -> Anonymous Sign-Ins.
 

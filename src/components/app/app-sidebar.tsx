@@ -21,7 +21,7 @@ export function AppSidebar({ active, onNavigate }: AppSidebarProps) {
           <Leaf className="size-4.5" />
         </div>
         <div className="leading-tight">
-          <p className="text-sm font-semibold">Steady</p>
+          <p className="text-sm font-semibold">NivYou</p>
           <p className="text-muted-foreground text-xs">Wegovy & prediabetes</p>
         </div>
       </div>

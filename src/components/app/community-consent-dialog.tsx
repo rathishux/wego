@@ -27,8 +27,8 @@ export function CommunityConsentDialog({ open, onOpenChange, onAgree }: Communit
         <DialogHeader>
           <DialogTitle>Before you post publicly</DialogTitle>
           <DialogDescription>
-            This is different from the rest of Steady — everything else stays private on your device.
-            Community posts are visible to other Steady users.
+            This is different from the rest of NivYou — everything else stays private on your device.
+            Community posts are visible to other NivYou users.
           </DialogDescription>
         </DialogHeader>
 

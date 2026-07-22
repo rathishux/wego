@@ -1,4 +1,4 @@
-# Steady — Wegovy & Prediabetes Tracker
+# NivYou — Wegovy & Prediabetes Tracker
 
 A web app for tracking Wegovy (semaglutide) doses, weight, blood glucose, and food/water habits — plus **You**, a private visual progress timeline, and an anonymous **Community** feed for sharing progress and supporting each other. Built as a React + TypeScript + Tailwind CSS web app using the [shadcn/ui](https://ui.shadcn.com) design system, and packaged as an installable PWA.
 
@@ -54,7 +54,7 @@ The **Face Progress Community** is always the one exception to "your data stays 
 By default the app has no login and needs none — every page works immediately with `localStorage`. Signing in and syncing data to the cloud is entirely opt-in, activated by configuring a Supabase backend (the same one used for the Community feature).
 
 - **Sign-in method:** passwordless email code (OTP) — enter your email, get a 6-digit code, done. No password to create, remember, or reset.
-- **Once a backend is configured**, the whole app requires signing in, and *all* tracking data (dose/weight/glucose/food/progress photos/markers) moves from `localStorage` into a private table scoped to your account via row-level security — nobody else can read it, including other Steady users.
+- **Once a backend is configured**, the whole app requires signing in, and *all* tracking data (dose/weight/glucose/food/progress photos/markers) moves from `localStorage` into a private table scoped to your account via row-level security — nobody else can read it, including other NivYou users.
 - **Existing local data isn't lost:** the first time you sign in, the app automatically imports whatever was already logged in that browser's `localStorage` into your new account, once, in the background.
 - **Multi-device:** once signed in, the same data follows you to any browser/device you sign into with that email.
 
@@ -81,7 +81,7 @@ Everything on the You page is private by default — visible only to you, stored
 
 ## Community
 
-Everywhere else in Steady, data never leaves your device (or your account, if cloud sync is on). Community is different on purpose: it's a small public feed, Twitter-style, where users post updates — progress, a win, motivation for others — with or without a photo, and can reply to each other. Framed around solidarity and support rather than comparison or spectacle. Because it can involve publicly shared photos tied to a medication side effect, it's built with guardrails:
+Everywhere else in NivYou, data never leaves your device (or your account, if cloud sync is on). Community is different on purpose: it's a small public feed, Twitter-style, where users post updates — progress, a win, motivation for others — with or without a photo, and can reply to each other. Framed around solidarity and support rather than comparison or spectacle. Because it can involve publicly shared photos tied to a medication side effect, it's built with guardrails:
 
 - **Anonymous by default** — posts and comments show a randomly generated pseudonym and color, never a real name, email, or account handle.
 - **Explicit consent** — a one-time dialog explains what's public before your first post, and every post requires checking an acknowledgment box. The dialog is also honest that anonymity protects your identity, not necessarily your face if you include a photo.
@@ -109,7 +109,7 @@ There's no in-app admin panel yet. Reported/auto-hidden posts and comments can b
 
 ## iOS & Android apps
 
-Steady wraps the same web app in a native shell using [Capacitor](https://capacitorjs.com), rather than being a from-scratch rewrite — so it shares one codebase, one Supabase backend, and gets every web feature automatically. On top of that, the app adapts itself for mobile:
+NivYou wraps the same web app in a native shell using [Capacitor](https://capacitorjs.com), rather than being a from-scratch rewrite — so it shares one codebase, one Supabase backend, and gets every web feature automatically. On top of that, the app adapts itself for mobile:
 
 - **Native-style navigation:** a bottom tab bar (Dashboard, Log entry, Progress, You, Community) replaces the sidebar below desktop width — the standard iOS/Android pattern — with Settings/Privacy/Terms tucked into the account menu, and Tips reachable from Settings.
 - **Native camera & photo picker:** on the iOS/Android apps, "Take photo" and "Upload" open the real native camera and photo library pickers (via `@capacitor/camera`) instead of a browser file input.

@@ -7,7 +7,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
-        <string>Steady</string>
+        <string>NivYou</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -48,10 +48,10 @@
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
-	<string>Steady uses your camera to attach a photo to a log entry or your progress timeline.</string>
+	<string>NivYou uses your camera to attach a photo to a log entry or your progress timeline.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Steady lets you choose an existing photo to attach to a log entry or your progress timeline.</string>
+	<string>NivYou lets you choose an existing photo to attach to a log entry or your progress timeline.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>Steady can save a photo you share to your library.</string>
+	<string>NivYou can save a photo you share to your library.</string>
 </dict>
 </plist>

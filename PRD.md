@@ -1,4 +1,4 @@
-# Product Requirements Document: Steady — Wegovy & Prediabetes Tracker
+# Product Requirements Document: NivYou — Wegovy & Prediabetes Tracker
 
 **Status:** Draft v1.0
 **Author:** [Your name]
@@ -8,7 +8,7 @@
 
 ## 1. Overview
 
-Steady is a lightweight, personal tracking app for someone managing weight loss on Wegovy (semaglutide) while prediabetic and under a doctor's care. It consolidates dosage, weight, blood glucose, and food/water logging in one place so the user and their care team can spot patterns and stay on track between appointments.
+NivYou is a lightweight, personal tracking app for someone managing weight loss on Wegovy (semaglutide) while prediabetic and under a doctor's care. It consolidates dosage, weight, blood glucose, and food/water logging in one place so the user and their care team can spot patterns and stay on track between appointments.
 
 ## 2. Problem Statement
 
@@ -153,8 +153,8 @@ This revises Section 6.7 ("Data Persistence") and the "no login/account required
 
 - **Account menu redesign:** the sidebar's bottom control now shows "Account" (not the raw email) with an avatar and dropdown, reachable in both local-only and cloud-synced mode — not just when signed in. The dropdown surfaces Settings, Privacy Policy, and Terms & Conditions, plus Sign out when applicable.
 - **Settings page:** account info (signed-in email + sign out, or a note about local-only mode), an appearance switcher (light/dark/system), and links to the two legal pages. Not a top-level nav item — reached only via the account menu, to keep the main sidebar focused on tracking features.
-- **Privacy Policy and Terms & Conditions:** standard-launch boilerplate pages describing what Steady actually does (local-first storage, opt-in cloud sync, Community's public/pseudonymous exception, no medical advice) — explicitly marked as a draft starting point, not reviewed legal advice, since Section 12 already carries the same "not medical advice" boundary that these pages restate for the legal surface.
-- **Explicitly out of scope for this addendum:** real payment/subscription tiers (no monetization exists in the product), a cookie-consent banner (not applicable — Steady doesn't use tracking cookies), and data export/account deletion tooling (already tracked as out of scope in Section 14).
+- **Privacy Policy and Terms & Conditions:** standard-launch boilerplate pages describing what NivYou actually does (local-first storage, opt-in cloud sync, Community's public/pseudonymous exception, no medical advice) — explicitly marked as a draft starting point, not reviewed legal advice, since Section 12 already carries the same "not medical advice" boundary that these pages restate for the legal surface.
+- **Explicitly out of scope for this addendum:** real payment/subscription tiers (no monetization exists in the product), a cookie-consent banner (not applicable — NivYou doesn't use tracking cookies), and data export/account deletion tooling (already tracked as out of scope in Section 14).
 
 ## 17. v1.6 Addendum — Native iOS and Android apps
 
