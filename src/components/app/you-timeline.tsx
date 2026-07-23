@@ -31,7 +31,7 @@ export function YouTimeline({ posts, onDelete, onShare, sharing }: YouTimelinePr
   if (posts.length === 0) {
     return (
       <p className="text-muted-foreground py-4 text-sm">
-        Nothing here yet. Tap "Add photo update" to start your timeline.
+        Nothing here yet. Tap "Add your recent photo" to start your timeline.
       </p>
     );
   }
@@ -75,12 +75,11 @@ export function YouTimeline({ posts, onDelete, onShare, sharing }: YouTimelinePr
 
               <div className="flex items-center gap-2">
                 {post.sharedPostId ? (
-                  <span className="text-muted-foreground inline-flex items-center gap-1.5 text-xs">
+                  <span className="text-primary inline-flex items-center gap-1.5 text-xs font-medium">
                     <Check className="size-3.5" /> Shared to Community
                   </span>
                 ) : (
                   <Button
-                    variant="outline"
                     size="sm"
                     className="gap-1.5"
                     disabled={sharing === post.id}

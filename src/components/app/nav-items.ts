@@ -51,7 +51,7 @@ export const NAV_ITEMS: NavItem[] = [
   {
     id: "you",
     label: "You",
-    description: "Your private visual timeline — photos, weight, face and body changes",
+    description: "Your private visual timeline",
     icon: Camera,
   },
   {

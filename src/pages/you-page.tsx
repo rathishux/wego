@@ -74,7 +74,7 @@ export function YouPage() {
         <DialogTrigger asChild>
           <Button className="w-full gap-2">
             <Camera className="size-4" />
-            Add photo update
+            Add your recent photo
           </Button>
         </DialogTrigger>
         <DialogContent>

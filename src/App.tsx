@@ -121,7 +121,7 @@ function MainApp() {
           <CommunityPage />
         </React.Suspense>
       )}
-      {page === "tips" && <TipsPage />}
+      {page === "tips" && <TipsPage onNavigate={navigate} />}
       {page === "settings" && (
         <React.Suspense fallback={PAGE_FALLBACK}>
           <SettingsPage onNavigate={navigate} />

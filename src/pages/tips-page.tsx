@@ -1,5 +1,7 @@
-import { Activity, Ban, Heart, ShieldAlert, Utensils } from "lucide-react";
+import { ArrowLeft, Activity, Ban, Heart, ShieldAlert, Utensils } from "lucide-react";
 
+import type { PageId } from "@/components/app/nav-items";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const TIPS = [
@@ -35,22 +37,32 @@ const TIPS = [
   },
 ];
 
-export function TipsPage() {
+interface TipsPageProps {
+  onNavigate: (page: PageId) => void;
+}
+
+export function TipsPage({ onNavigate }: TipsPageProps) {
   return (
-    <div className="grid gap-4 sm:grid-cols-2">
-      {TIPS.map((tip) => (
-        <Card key={tip.title}>
-          <CardHeader>
-            <div className="flex items-center gap-3">
-              <tip.icon className={`size-5 ${tip.accent}`} />
-              <CardTitle className="text-base">{tip.title}</CardTitle>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <p className="text-muted-foreground text-sm">{tip.body}</p>
-          </CardContent>
-        </Card>
-      ))}
+    <div className="flex flex-col gap-4">
+      <Button variant="ghost" size="sm" className="w-fit gap-1.5 md:hidden" onClick={() => onNavigate("settings")}>
+        <ArrowLeft className="size-4" /> Back
+      </Button>
+
+      <div className="grid gap-4 sm:grid-cols-2">
+        {TIPS.map((tip) => (
+          <Card key={tip.title}>
+            <CardHeader>
+              <div className="flex items-center gap-3">
+                <tip.icon className={`size-5 ${tip.accent}`} />
+                <CardTitle className="text-base">{tip.title}</CardTitle>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <p className="text-muted-foreground text-sm">{tip.body}</p>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
     </div>
   );
 }

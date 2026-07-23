@@ -1,6 +1,6 @@
 import { getSupabase } from "@/lib/supabase";
 import { KEYS, loadList, loadValue } from "@/lib/storage";
-import type { DoseEntry, FoodEntry, GlucoseEntry, Markers, ProgressPhoto, WeightEntry } from "@/lib/types";
+import type { DoseEntry, FoodEntry, GlucoseEntry, Markers, Profile, ProgressPhoto, WeightEntry } from "@/lib/types";
 
 const MIGRATION_FLAG_KEY = "steady.cloudMigrationDone";
 
@@ -13,6 +13,7 @@ export async function migrateLocalDataToCloud(userId: string): Promise<number | 
   const food = loadList<FoodEntry>(KEYS.food);
   const progressPhotos = loadList<ProgressPhoto>(KEYS.progressPhotos);
   const markers = loadValue<Markers | null>(KEYS.markers, null);
+  const profile = loadValue<Profile | null>(KEYS.profile, null);
 
   const rows = [
     ...doses.map((e) => ({ id: e.id, user_id: userId, type: "dose", created_at: e.createdAt, date: e.date, data: e })),
@@ -40,6 +41,13 @@ export async function migrateLocalDataToCloud(userId: string): Promise<number | 
     const { error } = await supabase
       .from("user_markers")
       .upsert({ user_id: userId, data: markers, updated_at: new Date().toISOString() });
+    if (error) throw new Error(error.message);
+  }
+
+  if (profile && (profile.name || profile.height || profile.weight)) {
+    const { error } = await supabase
+      .from("user_profile")
+      .upsert({ user_id: userId, data: profile, updated_at: new Date().toISOString() });
     if (error) throw new Error(error.message);
   }
 

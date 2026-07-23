@@ -3,7 +3,10 @@ import { ArrowLeft, BookOpenText, FileText, LogOut, Monitor, Moon, ShieldCheck, 
 import type { PageId } from "@/components/app/nav-items";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { useAuth } from "@/hooks/use-auth";
+import { useProfile } from "@/hooks/use-profile";
 import { useTheme } from "@/hooks/use-theme";
 import { cn } from "@/lib/utils";
 
@@ -20,6 +23,7 @@ const THEME_OPTIONS = [
 export function SettingsPage({ onNavigate }: SettingsPageProps) {
   const { cloudEnabled, user, signOut } = useAuth();
   const { theme, setTheme } = useTheme();
+  const { profile, update } = useProfile();
   const signedIn = cloudEnabled && user;
 
   return (
@@ -32,7 +36,7 @@ export function SettingsPage({ onNavigate }: SettingsPageProps) {
         <CardHeader>
           <CardTitle className="text-base">Account</CardTitle>
         </CardHeader>
-        <CardContent className="flex flex-col gap-3">
+        <CardContent className="flex flex-col gap-4">
           {signedIn ? (
             <>
               <p className="text-sm">
@@ -51,6 +55,42 @@ export function SettingsPage({ onNavigate }: SettingsPageProps) {
               account. See the README for how to enable cloud sync.
             </p>
           )}
+
+          <div className="grid grid-cols-1 gap-4 border-t pt-4 sm:grid-cols-3">
+            <div className="space-y-1.5">
+              <Label htmlFor="profile-name" className="text-muted-foreground text-xs">
+                Name (optional)
+              </Label>
+              <Input
+                id="profile-name"
+                value={profile.name}
+                onChange={(e) => update("name", e.target.value)}
+                placeholder="—"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="profile-height" className="text-muted-foreground text-xs">
+                Height (optional)
+              </Label>
+              <Input
+                id="profile-height"
+                value={profile.height}
+                onChange={(e) => update("height", e.target.value)}
+                placeholder="—"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="profile-weight" className="text-muted-foreground text-xs">
+                Weight (optional)
+              </Label>
+              <Input
+                id="profile-weight"
+                value={profile.weight}
+                onChange={(e) => update("weight", e.target.value)}
+                placeholder="—"
+              />
+            </div>
+          </div>
         </CardContent>
       </Card>
 
@@ -80,18 +120,26 @@ export function SettingsPage({ onNavigate }: SettingsPageProps) {
         </CardContent>
       </Card>
 
-      <Card>
+      <Card className="md:hidden">
         <CardHeader>
-          <CardTitle className="text-base">About</CardTitle>
+          <CardTitle className="text-base">Tips</CardTitle>
         </CardHeader>
-        <CardContent className="flex flex-col gap-1">
+        <CardContent>
           <button
             type="button"
-            className="hover:bg-accent -mx-2 flex items-center gap-2.5 rounded-md px-2 py-2 text-left text-sm md:hidden"
+            className="hover:bg-accent -mx-2 flex items-center gap-2.5 rounded-md px-2 py-2 text-left text-sm"
             onClick={() => onNavigate("tips")}
           >
             <BookOpenText className="text-muted-foreground size-4" /> Tips
           </button>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base">Legal</CardTitle>
+        </CardHeader>
+        <CardContent className="flex flex-col gap-1">
           <button
             type="button"
             className="hover:bg-accent -mx-2 flex items-center gap-2.5 rounded-md px-2 py-2 text-left text-sm"
