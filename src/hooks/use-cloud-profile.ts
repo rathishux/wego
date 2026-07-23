@@ -4,7 +4,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { getSupabase } from "@/lib/supabase";
 import type { Profile } from "@/lib/types";
 
-const EMPTY_PROFILE: Profile = { name: "", height: "", weight: "" };
+const EMPTY_PROFILE: Profile = { name: "", photo: "", sex: "", birthday: "", height: "", weight: "" };
 
 export function useCloudProfile() {
   const { user } = useAuth();

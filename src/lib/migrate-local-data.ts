@@ -44,7 +44,7 @@ export async function migrateLocalDataToCloud(userId: string): Promise<number | 
     if (error) throw new Error(error.message);
   }
 
-  if (profile && (profile.name || profile.height || profile.weight)) {
+  if (profile && (profile.name || profile.photo || profile.sex || profile.birthday || profile.height || profile.weight)) {
     const { error } = await supabase
       .from("user_profile")
       .upsert({ user_id: userId, data: profile, updated_at: new Date().toISOString() });

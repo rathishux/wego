@@ -79,7 +79,7 @@ export function YouPage() {
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>New entry</DialogTitle>
+            <DialogTitle>Add your recent photo</DialogTitle>
             <DialogDescription>
               Private by default — visible only to you unless you share it.
             </DialogDescription>

@@ -7,6 +7,7 @@ export const KEYS = {
   food: STORAGE_PREFIX + "food",
   markers: STORAGE_PREFIX + "markers",
   profile: STORAGE_PREFIX + "profile",
+  notificationPrefs: STORAGE_PREFIX + "notificationPrefs",
   progressPhotos: STORAGE_PREFIX + "progressPhotos",
   youPosts: STORAGE_PREFIX + "youPosts",
 } as const;

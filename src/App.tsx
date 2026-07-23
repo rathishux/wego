@@ -26,6 +26,15 @@ const PrivacyPolicyPage = React.lazy(() =>
   import("@/pages/privacy-policy-page").then((m) => ({ default: m.PrivacyPolicyPage })),
 );
 const TermsPage = React.lazy(() => import("@/pages/terms-page").then((m) => ({ default: m.TermsPage })));
+const ProfilePage = React.lazy(() =>
+  import("@/pages/profile-page").then((m) => ({ default: m.ProfilePage })),
+);
+const AccountPage = React.lazy(() =>
+  import("@/pages/account-page").then((m) => ({ default: m.AccountPage })),
+);
+const NotificationsPage = React.lazy(() =>
+  import("@/pages/notifications-page").then((m) => ({ default: m.NotificationsPage })),
+);
 
 const PAGE_FALLBACK = <p className="text-muted-foreground text-sm">Loading…</p>;
 
@@ -135,6 +144,21 @@ function MainApp() {
       {page === "terms" && (
         <React.Suspense fallback={PAGE_FALLBACK}>
           <TermsPage onNavigate={navigate} />
+        </React.Suspense>
+      )}
+      {page === "profile" && (
+        <React.Suspense fallback={PAGE_FALLBACK}>
+          <ProfilePage onNavigate={navigate} />
+        </React.Suspense>
+      )}
+      {page === "account" && (
+        <React.Suspense fallback={PAGE_FALLBACK}>
+          <AccountPage onNavigate={navigate} />
+        </React.Suspense>
+      )}
+      {page === "notifications" && (
+        <React.Suspense fallback={PAGE_FALLBACK}>
+          <NotificationsPage onNavigate={navigate} />
         </React.Suspense>
       )}
     </AppShell>

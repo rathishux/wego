@@ -1,4 +1,5 @@
 import {
+  Bell,
   BookOpenText,
   Camera,
   FileText,
@@ -7,6 +8,8 @@ import {
   Settings,
   ShieldCheck,
   TrendingUp,
+  User,
+  UserCog,
   Users,
   type LucideIcon,
 } from "lucide-react";
@@ -19,6 +22,9 @@ export type PageId =
   | "community"
   | "tips"
   | "settings"
+  | "profile"
+  | "account"
+  | "notifications"
   | "privacy"
   | "terms";
 
@@ -79,6 +85,24 @@ export const SECONDARY_ITEMS: NavItem[] = [
     label: "Settings",
     description: "Account, appearance, and app info",
     icon: Settings,
+  },
+  {
+    id: "profile",
+    label: "Profile",
+    description: "Your display picture",
+    icon: User,
+  },
+  {
+    id: "account",
+    label: "Account",
+    description: "Name, sex, birthday, height, and weight",
+    icon: UserCog,
+  },
+  {
+    id: "notifications",
+    label: "Notifications",
+    description: "Alerts and dose reminders",
+    icon: Bell,
   },
   {
     id: "privacy",
