@@ -1,6 +1,19 @@
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Trash2 } from "lucide-react";
+import * as React from "react";
+import { toast } from "sonner";
 
 import type { PageId } from "@/components/app/nav-items";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -8,6 +21,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useAuth } from "@/hooks/use-auth";
 import { useProfile } from "@/hooks/use-profile";
+import { deleteAccountData } from "@/lib/delete-account";
 
 interface AccountPageProps {
   onNavigate: (page: PageId) => void;
@@ -23,7 +37,20 @@ const SEX_OPTIONS = [
 export function AccountPage({ onNavigate }: AccountPageProps) {
   const { cloudEnabled, user } = useAuth();
   const { profile, update } = useProfile();
+  const [deleting, setDeleting] = React.useState(false);
   const signedIn = cloudEnabled && user;
+
+  async function handleDeleteAccount() {
+    if (!user) return;
+    setDeleting(true);
+    try {
+      await deleteAccountData(user.id);
+      toast.success("Your account and all its data have been deleted.");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Couldn't delete your account. Please try again.");
+      setDeleting(false);
+    }
+  }
 
   return (
     <div className="mx-auto flex w-full max-w-xl flex-col gap-4">
@@ -121,6 +148,43 @@ export function AccountPage({ onNavigate }: AccountPageProps) {
           </div>
         </CardContent>
       </Card>
+
+      {signedIn && (
+        <Card className="border-destructive/40">
+          <CardHeader>
+            <CardTitle className="text-destructive text-base">Delete account</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant="destructive" className="w-full gap-1.5">
+                  <Trash2 className="size-4" /> Delete my account
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Delete your account?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This permanently erases all your data — every dose, weight, glucose, and food log,
+                    your entire You timeline, and anything you've posted or commented on in Community.
+                    You'll be signed out immediately afterward. This cannot be undone.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel disabled={deleting}>Cancel</AlertDialogCancel>
+                  <AlertDialogAction
+                    className="bg-destructive text-white hover:bg-destructive/90"
+                    disabled={deleting}
+                    onClick={handleDeleteAccount}
+                  >
+                    {deleting ? "Deleting…" : "Delete permanently"}
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }
