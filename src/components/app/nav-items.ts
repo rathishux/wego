@@ -3,6 +3,7 @@ import {
   BookOpenText,
   Camera,
   FileText,
+  HeartPulse,
   LayoutDashboard,
   ListPlus,
   Settings,
@@ -26,6 +27,7 @@ export type PageId =
   | "account"
   | "notifications"
   | "privacy"
+  | "healthPrivacy"
   | "terms";
 
 export interface NavItem {
@@ -109,6 +111,12 @@ export const SECONDARY_ITEMS: NavItem[] = [
     label: "Privacy Policy",
     description: "What data NivYou stores and how it's used",
     icon: ShieldCheck,
+  },
+  {
+    id: "healthPrivacy",
+    label: "Health Data Privacy",
+    description: "How your health data specifically is handled",
+    icon: HeartPulse,
   },
   {
     id: "terms",

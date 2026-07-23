@@ -4,6 +4,7 @@ import {
   BookOpenText,
   ChevronRight,
   FileText,
+  HeartPulse,
   LogOut,
   Monitor,
   Moon,
@@ -94,6 +95,11 @@ export function SettingsPage({ onNavigate }: SettingsPageProps) {
       <Card>
         <CardContent className="flex flex-col gap-1">
           <SettingsRow icon={ShieldCheck} label="Privacy Policy" onClick={() => onNavigate("privacy")} />
+          <SettingsRow
+            icon={HeartPulse}
+            label="Health Data Privacy"
+            onClick={() => onNavigate("healthPrivacy")}
+          />
           <SettingsRow icon={FileText} label="Terms & Conditions" onClick={() => onNavigate("terms")} />
         </CardContent>
       </Card>

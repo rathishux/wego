@@ -1,10 +1,32 @@
-import { ArrowLeft, Activity, Ban, Heart, ShieldAlert, Utensils } from "lucide-react";
+import {
+  ArrowLeft,
+  Activity,
+  Ban,
+  Calendar,
+  Heart,
+  ShieldAlert,
+  Siren,
+  Stethoscope,
+  Utensils,
+} from "lucide-react";
 
 import type { PageId } from "@/components/app/nav-items";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const TIPS = [
+  {
+    icon: Calendar,
+    title: "Your first month",
+    body: "Nausea and GI symptoms are most common when starting or increasing a dose, and often ease as your body adjusts. Eat slowly, stop when full, and favor small, low-fat meals over the first few weeks. Staying hydrated matters even when eating less.",
+    accent: "text-primary",
+  },
+  {
+    icon: Stethoscope,
+    title: "Managing common side effects",
+    body: "For nausea: smaller meals, eating slowly, and avoiding lying down right after eating can help. For constipation: fiber, water, and movement. For diarrhea: stay hydrated and stick to bland foods until it settles. These are general self-care ideas, not treatment — check with your doctor if anything persists or worsens.",
+    accent: "text-primary",
+  },
   {
     icon: Utensils,
     title: "Helpful eating patterns",
@@ -22,6 +44,12 @@ const TIPS = [
     title: "Track beyond weight",
     body: "Sleep, mood, waist measurement, GI side effects, activity, and A1c/labs can add context for doctor visits.",
     accent: "text-chart-2",
+  },
+  {
+    icon: Siren,
+    title: "When to seek care promptly",
+    body: "Severe abdominal pain that won't go away (with or without vomiting), yellowing skin or eyes, a lump or swelling in your neck with hoarseness or trouble swallowing, signs of an allergic reaction (face/throat swelling, trouble breathing, severe rash, fainting), vision changes, or signs of very low blood sugar (shakiness, confusion, fast heartbeat) all warrant contacting your doctor or seeking care right away.",
+    accent: "text-destructive",
   },
   {
     icon: Heart,

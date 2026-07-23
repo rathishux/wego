@@ -26,6 +26,9 @@ const PrivacyPolicyPage = React.lazy(() =>
   import("@/pages/privacy-policy-page").then((m) => ({ default: m.PrivacyPolicyPage })),
 );
 const TermsPage = React.lazy(() => import("@/pages/terms-page").then((m) => ({ default: m.TermsPage })));
+const HealthDataPrivacyPage = React.lazy(() =>
+  import("@/pages/health-data-privacy-page").then((m) => ({ default: m.HealthDataPrivacyPage })),
+);
 const ProfilePage = React.lazy(() =>
   import("@/pages/profile-page").then((m) => ({ default: m.ProfilePage })),
 );
@@ -38,26 +41,30 @@ const NotificationsPage = React.lazy(() =>
 
 const PAGE_FALLBACK = <p className="text-muted-foreground text-sm">Loading…</p>;
 
-function getStandaloneLegalRoute(): "privacy" | "terms" | null {
+type StandaloneLegalRoute = "privacy" | "terms" | "health-privacy";
+
+function getStandaloneLegalRoute(): StandaloneLegalRoute | null {
   const base = import.meta.env.BASE_URL;
   const path = window.location.pathname;
   if (!path.startsWith(base)) return null;
   const rest = path.slice(base.length).replace(/\/$/, "");
-  if (rest === "privacy" || rest === "terms") return rest;
+  if (rest === "privacy" || rest === "terms" || rest === "health-privacy") return rest;
   return null;
 }
 
 // Lets App Store/Play Store reviewers (and anyone else) open the privacy
-// policy or terms straight from a bare URL, without signing in or loading
-// the rest of the app.
-function StandaloneLegalPage({ route }: { route: "privacy" | "terms" }) {
+// policy, terms, or health data notice straight from a bare URL, without
+// signing in or loading the rest of the app.
+function StandaloneLegalPage({ route }: { route: StandaloneLegalRoute }) {
   const goHome = () => {
     window.location.href = import.meta.env.BASE_URL;
   };
   return (
     <div className="bg-background flex min-h-svh justify-center px-4 py-8">
       <React.Suspense fallback={PAGE_FALLBACK}>
-        {route === "privacy" ? <PrivacyPolicyPage onNavigate={goHome} /> : <TermsPage onNavigate={goHome} />}
+        {route === "privacy" && <PrivacyPolicyPage onNavigate={goHome} />}
+        {route === "terms" && <TermsPage onNavigate={goHome} />}
+        {route === "health-privacy" && <HealthDataPrivacyPage onNavigate={goHome} />}
       </React.Suspense>
     </div>
   );
@@ -144,6 +151,11 @@ function MainApp() {
       {page === "terms" && (
         <React.Suspense fallback={PAGE_FALLBACK}>
           <TermsPage onNavigate={navigate} />
+        </React.Suspense>
+      )}
+      {page === "healthPrivacy" && (
+        <React.Suspense fallback={PAGE_FALLBACK}>
+          <HealthDataPrivacyPage onNavigate={navigate} />
         </React.Suspense>
       )}
       {page === "profile" && (
