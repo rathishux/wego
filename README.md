@@ -1,4 +1,4 @@
-# Steady — Wegovy & Prediabetes Tracker
+# NivYou — Wegovy & Prediabetes Tracker
 
 A web app for tracking Wegovy (semaglutide) doses, weight, blood glucose, and food/water habits — plus **You**, a private visual progress timeline, and an anonymous **Community** feed for sharing progress and supporting each other. Built as a React + TypeScript + Tailwind CSS web app using the [shadcn/ui](https://ui.shadcn.com) design system, and packaged as an installable PWA.
 
@@ -14,7 +14,7 @@ See `PRD.md` for the full product requirements.
   - **Cloud-synced**: once a Supabase backend is configured, the app requires signing in (passwordless email code) and all tracking data syncs to your account instead of just one device.
 - `vite-plugin-pwa` for installability (works offline, add-to-home-screen)
 
-This is being built web-first. A native mobile app (e.g. via Capacitor) is a planned follow-up, not part of this codebase yet.
+This is built web-first, and also ships as native iOS and Android apps via **Capacitor** — same codebase, same Supabase backend, wrapped in a native shell with platform-appropriate navigation and native APIs (camera, share sheet). See "iOS & Android apps" below.
 
 ## Running locally
 
@@ -54,7 +54,7 @@ The **Face Progress Community** is always the one exception to "your data stays 
 By default the app has no login and needs none — every page works immediately with `localStorage`. Signing in and syncing data to the cloud is entirely opt-in, activated by configuring a Supabase backend (the same one used for the Community feature).
 
 - **Sign-in method:** passwordless email code (OTP) — enter your email, get a 6-digit code, done. No password to create, remember, or reset.
-- **Once a backend is configured**, the whole app requires signing in, and *all* tracking data (dose/weight/glucose/food/progress photos/markers) moves from `localStorage` into a private table scoped to your account via row-level security — nobody else can read it, including other Steady users.
+- **Once a backend is configured**, the whole app requires signing in, and *all* tracking data (dose/weight/glucose/food/progress photos/markers) moves from `localStorage` into a private table scoped to your account via row-level security — nobody else can read it, including other NivYou users.
 - **Existing local data isn't lost:** the first time you sign in, the app automatically imports whatever was already logged in that browser's `localStorage` into your new account, once, in the background.
 - **Multi-device:** once signed in, the same data follows you to any browser/device you sign into with that email.
 
@@ -81,7 +81,7 @@ Everything on the You page is private by default — visible only to you, stored
 
 ## Community
 
-Everywhere else in Steady, data never leaves your device (or your account, if cloud sync is on). Community is different on purpose: it's a small public feed, Twitter-style, where users post updates — progress, a win, motivation for others — with or without a photo, and can reply to each other. Framed around solidarity and support rather than comparison or spectacle. Because it can involve publicly shared photos tied to a medication side effect, it's built with guardrails:
+Everywhere else in NivYou, data never leaves your device (or your account, if cloud sync is on). Community is different on purpose: it's a small public feed, Twitter-style, where users post updates — progress, a win, motivation for others — with or without a photo, and can reply to each other. Framed around solidarity and support rather than comparison or spectacle. Because it can involve publicly shared photos tied to a medication side effect, it's built with guardrails:
 
 - **Anonymous by default** — posts and comments show a randomly generated pseudonym and color, never a real name, email, or account handle.
 - **Explicit consent** — a one-time dialog explains what's public before your first post, and every post requires checking an acknowledgment box. The dialog is also honest that anonymity protects your identity, not necessarily your face if you include a photo.
@@ -107,6 +107,32 @@ To enable it for real, using a free [Supabase](https://supabase.com) project:
 
 There's no in-app admin panel yet. Reported/auto-hidden posts and comments can be reviewed and restored (or permanently removed) directly from the Supabase Table Editor: check `community_posts.hidden = true` / `community_comments.hidden = true`, and `community_reports` / `community_comment_reports` for the reasons filed against them.
 
+## iOS & Android apps
+
+NivYou wraps the same web app in a native shell using [Capacitor](https://capacitorjs.com), rather than being a from-scratch rewrite — so it shares one codebase, one Supabase backend, and gets every web feature automatically. On top of that, the app adapts itself for mobile:
+
+- **Native-style navigation:** a bottom tab bar (Dashboard, Log entry, Progress, You, Community) replaces the sidebar below desktop width — the standard iOS/Android pattern — with Settings/Privacy/Terms tucked into the account menu, and Tips reachable from Settings.
+- **Native camera & photo picker:** on the iOS/Android apps, "Take photo" and "Upload" open the real native camera and photo library pickers (via `@capacitor/camera`) instead of a browser file input.
+- **Native share sheet:** the share icon on You and Community posts opens the real iOS/Android share sheet (via `@capacitor/share`), not just the web Share API.
+- **Bottom-sheet dialogs:** compose forms slide up from the bottom edge-to-edge on mobile (the native modal convention) and stay a centered dialog on desktop.
+- **Safe areas:** layout respects the iPhone notch/home indicator and Android status/navigation bars.
+- **Android hardware back button** navigates within the app (back to Dashboard) instead of instantly closing it, and the status bar style follows light/dark theme.
+
+### What's already set up vs. what you still need to do
+
+This repo includes the Capacitor config and the generated `android/` and `ios/` native projects, ready to open in Android Studio / Xcode. What it can't do from this environment: **actually compile a signed app or publish to a store** — that needs the Android SDK / Xcode toolchains and your own developer accounts, none of which exist here. Concretely, that means:
+
+1. **App ID.** `capacitor.config.ts` is set to `appId: "com.rathish.steady"`. If you want a different reverse-domain identifier, change it *before* you first build — it can't be changed later without publishing as a new app. (It's set in `capacitor.config.ts`, `android/app/build.gradle`, `android/app/src/main/res/values/strings.xml`, the `android/app/src/main/java/...` package path, and `PRODUCT_BUNDLE_IDENTIFIER` in `ios/App/App.xcodeproj/project.pbxproj` — all need to stay in sync.)
+2. **Replace the placeholder icon/splash.** `resources/icon.png` and `resources/splash.png` were generated from the existing app icon as a starting point (and still have the icon's rounded corners baked in, so it'll double-round on iOS). Swap in a proper 1024×1024 square icon, then run:
+   ```
+   npx @capacitor/assets generate --iconBackgroundColor '#1f6f50' --iconBackgroundColorDark '#132a20' --splashBackgroundColor '#fafaf5' --splashBackgroundColorDark '#17231c'
+   ```
+   This downloads image-processing binaries from GitHub, so run it on your own machine, not in a restricted network environment.
+3. **Android:** install [Android Studio](https://developer.android.com/studio), then run `npm run cap:android` — it builds the web app, syncs it into `android/`, and opens the project. From there, Android Studio handles SDK downloads, running on an emulator/device, and building a signed release bundle for the Play Store.
+4. **iOS (requires a Mac):** install Xcode, then run `npm run cap:ios` — it builds, syncs into `ios/`, and opens the Xcode project (no CocoaPods needed; it uses Swift Package Manager). From there, set your Team/signing in Xcode's Signing & Capabilities tab, then run on a simulator/device or archive for the App Store.
+5. **After any web code change**, run `npm run cap:sync` before rebuilding either native app — it rebuilds `dist/` and copies it into both native projects.
+6. **Store listings** need their own assets and text (screenshots, description, privacy policy URL — `Settings → Privacy Policy` in-app can be adapted for this) which aren't part of this repo.
+
 ## Structure
 
 - `src/pages/` — the top-level screens (Dashboard, Log entry, Progress, You, Community, Tips, Settings, Privacy Policy, Terms & Conditions) plus `login-page.tsx`
@@ -121,3 +147,8 @@ There's no in-app admin panel yet. Reported/auto-hidden posts and comments can b
 - `supabase/schema_accounts.sql` — database schema and RLS policies for private, per-account cloud-synced tracking data
 - `supabase/schema_v2.sql` — the You timeline's entry type, optional Community photos, and Community comments
 - `public/icon.svg` — app icon (used for favicon and PWA manifest)
+- `capacitor.config.ts` — native app config (app ID, name, splash screen)
+- `android/`, `ios/` — the generated native projects for the Play Store / App Store builds (open directly in Android Studio / Xcode)
+- `resources/` — source icon/splash images used by `@capacitor/assets` to generate all the native icon sizes
+- `src/hooks/use-native-shell.tsx` — wires up native-only behavior (Android back button, status bar style) on Capacitor builds; no-ops on the web
+- `src/lib/share.ts` — the share helper used by You/Community, using the native share sheet on Capacitor builds and the Web Share API on the web

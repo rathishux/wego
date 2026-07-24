@@ -8,7 +8,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { communityBackend, type CommunityComment, type CommunityPost, type ReportReason } from "@/lib/community";
-import { shareNative } from "@/lib/share";
+import { isShareCancelled, shareNative } from "@/lib/share";
 import { formatRelativeTime } from "@/lib/storage";
 import { cn } from "@/lib/utils";
 
@@ -16,7 +16,7 @@ async function handleDeviceShare(post: CommunityPost) {
   try {
     await shareNative({ photo: post.photo, text: post.caption });
   } catch (err) {
-    if (err instanceof DOMException && err.name === "AbortError") return;
+    if (isShareCancelled(err)) return;
     toast.error(err instanceof Error ? err.message : "Couldn't open the share sheet.");
   }
 }

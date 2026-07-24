@@ -1,4 +1,4 @@
--- Steady: one-off defensive fix for the entries.id column type.
+-- NivYou: one-off defensive fix for the entries.id column type.
 --
 -- The app's uid() helper generates short non-UUID strings (e.g.
 -- "mrs0mnzbisj1ao") as IDs, but entries.id was originally declared as

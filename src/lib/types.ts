@@ -43,6 +43,20 @@ export interface Markers {
   mood: string;
 }
 
+export interface Profile {
+  name: string;
+  photo: string;
+  sex: string;
+  birthday: string;
+  height: string;
+  weight: string;
+}
+
+export interface NotificationPrefs {
+  alerts: boolean;
+  doseReminders: boolean;
+}
+
 export interface ProgressPhoto {
   id: string;
   createdAt: number;

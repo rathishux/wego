@@ -11,7 +11,7 @@ interface AppSidebarProps {
 }
 
 export function AppSidebar({ active, onNavigate }: AppSidebarProps) {
-  const { cloudEnabled, user, signOut } = useAuth();
+  const { cloudEnabled, user } = useAuth();
   const signedIn = cloudEnabled && user;
 
   return (
@@ -21,7 +21,7 @@ export function AppSidebar({ active, onNavigate }: AppSidebarProps) {
           <Leaf className="size-4.5" />
         </div>
         <div className="leading-tight">
-          <p className="text-sm font-semibold">Steady</p>
+          <p className="text-sm font-semibold">NivYou</p>
           <p className="text-muted-foreground text-xs">Wegovy & prediabetes</p>
         </div>
       </div>
@@ -49,11 +49,7 @@ export function AppSidebar({ active, onNavigate }: AppSidebarProps) {
       </nav>
 
       <div className="mt-auto px-1">
-        <AccountMenu
-          user={signedIn ? user : null}
-          onNavigate={onNavigate}
-          onSignOut={signedIn ? () => signOut() : undefined}
-        />
+        <AccountMenu user={signedIn ? user : null} onNavigate={onNavigate} />
       </div>
     </div>
   );
