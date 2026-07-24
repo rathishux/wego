@@ -21,11 +21,14 @@ export function BottomTabBar({ active, onNavigate }: BottomTabBarProps) {
               type="button"
               onClick={() => onNavigate(item.id)}
               className={cn(
-                "flex flex-col items-center gap-0.5 py-2 text-[11px] font-medium transition-colors",
+                "flex flex-col items-center gap-0.5 py-2 text-[11px] font-medium transition-colors active:scale-95",
                 isActive ? "text-primary" : "text-muted-foreground",
               )}
             >
-              <item.icon className="size-5.5" strokeWidth={isActive ? 2.5 : 2} />
+              <item.icon
+                className={cn("size-5.5 transition-transform duration-200", isActive && "scale-110")}
+                strokeWidth={isActive ? 2.5 : 2}
+              />
               {item.label}
             </button>
           );

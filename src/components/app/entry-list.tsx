@@ -29,8 +29,12 @@ export function EntryList({ title, emptyLabel, rows, onDelete }: EntryListProps)
   return (
     <div className="flex flex-col gap-2">
       <h3 className="text-sm font-medium">{title}</h3>
-      {rows.map((row) => (
-        <div key={row.id} className="bg-card flex flex-col gap-2 rounded-lg border p-3">
+      {rows.map((row, index) => (
+        <div
+          key={row.id}
+          className="bg-card animate-in fade-in-0 slide-in-from-bottom-1 flex flex-col gap-2 rounded-lg border p-3 duration-300 ease-out"
+          style={{ animationDelay: `${Math.min(index, 8) * 40}ms`, animationFillMode: "backwards" }}
+        >
           <div className="flex items-start justify-between gap-3">
             <div className="flex min-w-0 items-start gap-3">
               {row.photo ? (

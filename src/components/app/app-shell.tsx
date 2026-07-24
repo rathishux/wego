@@ -40,7 +40,9 @@ export function AppShell({ active, onNavigate, children }: AppShellProps) {
         </header>
 
         <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-6 pb-24 md:px-8 md:py-8 md:pb-8">
-          {children}
+          <div key={active} className="animate-in fade-in-0 slide-in-from-bottom-2 duration-300 ease-out">
+            {children}
+          </div>
         </main>
       </div>
 
