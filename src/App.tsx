@@ -3,6 +3,7 @@ import { toast } from "sonner";
 
 import { AppShell } from "@/components/app/app-shell";
 import type { PageId } from "@/components/app/nav-items";
+import { SplashIntro } from "@/components/app/splash-intro";
 import { useAuth } from "@/hooks/use-auth";
 import { useNativeShell } from "@/hooks/use-native-shell";
 import { migrateLocalDataToCloud } from "@/lib/migrate-local-data";
@@ -77,20 +78,27 @@ export default function App() {
   }
 
   const { cloudEnabled, user, loading } = useAuth();
+  const [showSplash, setShowSplash] = React.useState(true);
 
+  let content: React.ReactNode;
   if (cloudEnabled && loading) {
-    return (
+    content = (
       <div className="bg-background flex min-h-svh items-center justify-center">
         <p className="text-muted-foreground text-sm">Loading…</p>
       </div>
     );
+  } else if (cloudEnabled && !user) {
+    content = <LoginPage />;
+  } else {
+    content = <MainApp />;
   }
 
-  if (cloudEnabled && !user) {
-    return <LoginPage />;
-  }
-
-  return <MainApp />;
+  return (
+    <>
+      {content}
+      {showSplash && <SplashIntro onFinish={() => setShowSplash(false)} />}
+    </>
+  );
 }
 
 function MainApp() {

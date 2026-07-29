@@ -1,6 +1,5 @@
-import { Leaf } from "lucide-react";
-
 import { AccountMenu } from "@/components/app/account-menu";
+import { LogoMark } from "@/components/app/logo-mark";
 import { NAV_ITEMS, type PageId } from "@/components/app/nav-items";
 import { useAuth } from "@/hooks/use-auth";
 import { cn } from "@/lib/utils";
@@ -18,7 +17,7 @@ export function AppSidebar({ active, onNavigate }: AppSidebarProps) {
     <div className="flex h-full flex-col gap-6 p-4">
       <div className="flex items-center gap-2 px-2 pt-2">
         <div className="bg-primary text-primary-foreground flex size-8 shrink-0 items-center justify-center rounded-lg">
-          <Leaf className="size-4.5" />
+          <LogoMark className="size-5.5" />
         </div>
         <div className="leading-tight">
           <p className="text-sm font-semibold">NivYou</p>
