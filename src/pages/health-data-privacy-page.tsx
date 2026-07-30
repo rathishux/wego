@@ -71,13 +71,27 @@ export function HealthDataPrivacyPage({ onNavigate }: HealthDataPrivacyPageProps
       <section>
         <h2>Your control over this data</h2>
         <ul>
-          <li>Delete any individual entry, You post, or Community post/comment at any time</li>
-          <li>
-            If signed in, permanently delete your account and everything tied to it from Settings → Account
-            → Delete account
-          </li>
+          <li>Delete any individual entry, You post, or Community post/comment at any time — no need to delete your whole account for that</li>
           <li>Use NivYou entirely without an account by never enabling cloud sync</li>
         </ul>
+      </section>
+
+      <section>
+        <h2>Delete your NivYou account and data</h2>
+        <p>If you've signed in with cloud sync, you can permanently delete your NivYou account at any time:</p>
+        <ol>
+          <li>Open NivYou and sign in</li>
+          <li>Go to Settings → Account</li>
+          <li>Scroll to the bottom and select Delete account</li>
+          <li>Confirm in the dialog that appears</li>
+        </ol>
+        <p>
+          This deletes your account and every record tied to it — dose, weight, glucose, and food entries,
+          progress markers, You timeline photos, Community posts and comments, and profile details —
+          immediately and completely. Nothing is retained afterward, and there is no grace period or backup
+          copy kept once you confirm.
+        </p>
+        <p>If you're using NivYou without an account (local-only mode), just delete the app to remove all your data — nothing was ever sent anywhere.</p>
       </section>
 
       <section>
@@ -93,7 +107,7 @@ export function HealthDataPrivacyPage({ onNavigate }: HealthDataPrivacyPageProps
 
       <section>
         <h2>Contact</h2>
-        <p>Questions about how your health data specifically is handled? Reach out at rathishuid@gmail.com.</p>
+        <p>Questions about how your health data specifically is handled? Reach out at bushchat3@gmail.com.</p>
       </section>
     </LegalPageLayout>
   );

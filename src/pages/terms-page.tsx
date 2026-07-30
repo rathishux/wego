@@ -89,7 +89,7 @@ export function TermsPage({ onNavigate }: TermsPageProps) {
 
       <section>
         <h2>Contact</h2>
-        <p>Questions about these terms? Reach out at rathishuid@gmail.com.</p>
+        <p>Questions about these terms? Reach out at bushchat3@gmail.com.</p>
       </section>
     </LegalPageLayout>
   );
