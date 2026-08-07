@@ -5,7 +5,7 @@ import { useCloudProfile } from "@/hooks/use-cloud-profile";
 import { KEYS, loadValue, saveValue } from "@/lib/storage";
 import type { Profile } from "@/lib/types";
 
-const EMPTY_PROFILE: Profile = { name: "", photo: "", sex: "", birthday: "", height: "", weight: "" };
+const EMPTY_PROFILE: Profile = { name: "", photo: "", sex: "", birthday: "", height: "", weight: "", medication: "" };
 
 export function useProfile() {
   const { cloudEnabled } = useAuth();

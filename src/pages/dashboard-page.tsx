@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useEntries } from "@/hooks/use-entries";
+import { useProfile } from "@/hooks/use-profile";
 import { FEED_TAG_LABEL, FEED_TAG_STYLE, buildFeed } from "@/lib/feed";
 import { addDays, formatDateShort, sortByDateAsc, sortByDateDesc } from "@/lib/storage";
 import type { DoseEntry, FoodEntry, GlucoseEntry, LogType, WeightEntry } from "@/lib/types";
@@ -14,6 +15,7 @@ interface DashboardPageProps {
 }
 
 export function DashboardPage({ onNavigate }: DashboardPageProps) {
+  const { profile } = useProfile();
   const { list: doseList, loading: doseLoading, error: doseError } = useEntries<DoseEntry>("dose");
   const { list: weightList, loading: weightLoading, error: weightError } = useEntries<WeightEntry>("weight");
   const { list: glucoseList, loading: glucoseLoading, error: glucoseError } = useEntries<GlucoseEntry>("glucose");
@@ -55,7 +57,7 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
                 <Syringe className="size-5" />
               </div>
               <div>
-                <CardTitle>Next dose</CardTitle>
+                <CardTitle>Next dose{profile.medication ? ` · ${profile.medication}` : ""}</CardTitle>
                 <p className="text-muted-foreground text-sm">Estimated from your last injection</p>
               </div>
             </div>

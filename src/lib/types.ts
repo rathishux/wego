@@ -57,7 +57,10 @@ export interface Profile {
   birthday: string;
   height: string;
   weight: string;
+  medication: string;
 }
+
+export const MEDICATION_OPTIONS = ["Wegovy", "Ozempic", "Mounjaro", "Zepbound", "Rybelsus", "Other"] as const;
 
 export interface NotificationPrefs {
   alerts: boolean;

@@ -22,6 +22,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useAuth } from "@/hooks/use-auth";
 import { useProfile } from "@/hooks/use-profile";
 import { deleteAccountData } from "@/lib/delete-account";
+import { MEDICATION_OPTIONS } from "@/lib/types";
 
 interface AccountPageProps {
   onNavigate: (page: PageId) => void;
@@ -34,11 +35,32 @@ const SEX_OPTIONS = [
   { value: "prefer_not_to_say", label: "Prefer not to say" },
 ];
 
+const KNOWN_MEDICATIONS = MEDICATION_OPTIONS.filter((opt) => opt !== "Other") as readonly string[];
+
 export function AccountPage({ onNavigate }: AccountPageProps) {
   const { cloudEnabled, user } = useAuth();
   const { profile, update } = useProfile();
   const [deleting, setDeleting] = React.useState(false);
+  const [customMedication, setCustomMedication] = React.useState(
+    () => profile.medication !== "" && !KNOWN_MEDICATIONS.includes(profile.medication),
+  );
   const signedIn = cloudEnabled && user;
+
+  const medicationSelectValue = customMedication
+    ? "Other"
+    : profile.medication
+      ? profile.medication
+      : undefined;
+
+  function handleMedicationSelect(value: string) {
+    if (value !== "Other") {
+      setCustomMedication(false);
+      update("medication", value);
+      return;
+    }
+    setCustomMedication(true);
+    if (KNOWN_MEDICATIONS.includes(profile.medication)) update("medication", "");
+  }
 
   async function handleDeleteAccount() {
     if (!user) return;
@@ -116,6 +138,38 @@ export function AccountPage({ onNavigate }: AccountPageProps) {
               onChange={(e) => update("birthday", e.target.value)}
             />
           </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base">Medication</CardTitle>
+          <p className="text-muted-foreground text-sm">Optional — shown as context on your dashboard</p>
+        </CardHeader>
+        <CardContent className="space-y-1.5">
+          <Label htmlFor="account-medication" className="text-muted-foreground text-xs">
+            Which GLP-1 medication are you on?
+          </Label>
+          <Select value={medicationSelectValue} onValueChange={handleMedicationSelect}>
+            <SelectTrigger id="account-medication" className="w-full">
+              <SelectValue placeholder="Select" />
+            </SelectTrigger>
+            <SelectContent>
+              {MEDICATION_OPTIONS.map((opt) => (
+                <SelectItem key={opt} value={opt}>
+                  {opt}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          {medicationSelectValue === "Other" && (
+            <Input
+              value={profile.medication}
+              onChange={(e) => update("medication", e.target.value)}
+              placeholder="Enter medication name"
+              className="mt-1.5"
+            />
+          )}
         </CardContent>
       </Card>
 
