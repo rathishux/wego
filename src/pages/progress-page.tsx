@@ -13,6 +13,7 @@ import { Label } from "@/components/ui/label";
 import { FEED_TAG_LABEL, FEED_TAG_STYLE, buildFeed } from "@/lib/feed";
 import { useAuth } from "@/hooks/use-auth";
 import { useEntries } from "@/hooks/use-entries";
+import { useProfile } from "@/hooks/use-profile";
 import {
   addDays,
   formatDate,
@@ -24,13 +25,11 @@ import {
   todayISO,
   uid,
 } from "@/lib/storage";
+import { kgToUnit } from "@/lib/units";
 import type { DoseEntry, FoodEntry, GlucoseEntry, MarkerEntry, ProgressPhoto, WeightEntry } from "@/lib/types";
 
-const chartConfig: ChartConfig = {
-  weight: { label: "Weight (kg)", color: "var(--chart-2)" },
-};
-
 export function ProgressPage() {
+  const { profile } = useProfile();
   const { list: doseList, loading: doseLoading, error: doseError } = useEntries<DoseEntry>("dose");
   const { list: weightList, loading: weightLoading, error: weightError } = useEntries<WeightEntry>("weight");
   const { list: glucoseList, loading: glucoseLoading, error: glucoseError } = useEntries<GlucoseEntry>("glucose");
@@ -39,14 +38,19 @@ export function ProgressPage() {
   const dataLoading = doseLoading || weightLoading || glucoseLoading || foodLoading;
   const dataError = doseError || weightError || glucoseError || foodError;
 
+  const chartConfig: ChartConfig = {
+    weight: { label: `Weight (${profile.weightUnit})`, color: "var(--chart-2)" },
+  };
+
   const weights = sortByDateAsc(weightList);
   const cutoff = addDays(todayISO(), -30).toISOString().slice(0, 10);
   const recentWeights = weights.filter((w) => w.date >= cutoff);
 
-  const trendDelta =
+  const trendDeltaKg =
     weights.length > 1 ? +(weights.at(-1)!.weight - weights[0].weight).toFixed(1) : null;
+  const trendDelta = trendDeltaKg === null ? null : kgToUnit(trendDeltaKg, profile.weightUnit);
 
-  const chartData = weights.map((w) => ({ date: formatDate(w.date), weight: w.weight }));
+  const chartData = weights.map((w) => ({ date: formatDate(w.date), weight: kgToUnit(w.weight, profile.weightUnit) }));
 
   const loggedDates = new Set(
     [...doseList, ...weightList, ...glucoseList, ...foodList].map((e) => e.date),
@@ -55,7 +59,7 @@ export function ProgressPage() {
 
   const giCount = doseList.filter((d) => d.sideEffects && d.sideEffects.trim().length > 0).length;
 
-  const feed = buildFeed(sortByDateDesc(doseList), weights, sortByDateDesc(glucoseList), foodList);
+  const feed = buildFeed(sortByDateDesc(doseList), weights, sortByDateDesc(glucoseList), foodList, profile.weightUnit);
 
   if (dataLoading) {
     return <p className="text-muted-foreground text-sm">Loading your progress…</p>;
@@ -78,7 +82,7 @@ export function ProgressPage() {
             </div>
             <div className="text-right">
               <p className="text-chart-2 text-base font-semibold">
-                {trendDelta === null ? "—" : `${trendDelta > 0 ? "+" : ""}${trendDelta} kg`}
+                {trendDelta === null ? "—" : `${trendDelta > 0 ? "+" : ""}${trendDelta} ${profile.weightUnit}`}
               </p>
               <p className="text-muted-foreground text-xs">Since first log</p>
             </div>
@@ -98,7 +102,7 @@ export function ProgressPage() {
                   tickLine={false}
                   axisLine={false}
                   tickMargin={8}
-                  width={36}
+                  width={profile.weightUnit === "lbs" ? 44 : 36}
                   domain={["dataMin - 1", "dataMax + 1"]}
                 />
                 <ChartTooltip content={<ChartTooltipContent />} />

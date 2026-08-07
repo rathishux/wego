@@ -1,10 +1,20 @@
-import { GLUCOSE_TIMING_LABEL, type DoseEntry, type FeedItem, type FoodEntry, type GlucoseEntry, type WeightEntry } from "@/lib/types";
+import { kgToUnit } from "@/lib/units";
+import {
+  GLUCOSE_TIMING_LABEL,
+  type DoseEntry,
+  type FeedItem,
+  type FoodEntry,
+  type GlucoseEntry,
+  type WeightEntry,
+  type WeightUnit,
+} from "@/lib/types";
 
 export function buildFeed(
   doses: DoseEntry[],
   weights: WeightEntry[],
   glucose: GlucoseEntry[],
   food: FoodEntry[],
+  weightUnit: WeightUnit,
 ): FeedItem[] {
   const items: FeedItem[] = [
     ...doses.map((d): FeedItem => ({
@@ -22,7 +32,7 @@ export function buildFeed(
       id: w.id,
       date: w.date,
       createdAt: w.createdAt,
-      title: `${w.weight} kg`,
+      title: `${kgToUnit(w.weight, weightUnit)} ${weightUnit}`,
       meta: "",
       photo: w.photo,
     })),

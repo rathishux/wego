@@ -50,6 +50,8 @@ export interface Markers {
   mood: string;
 }
 
+export type WeightUnit = "kg" | "lbs";
+
 export interface Profile {
   name: string;
   photo: string;
@@ -58,6 +60,7 @@ export interface Profile {
   height: string;
   weight: string;
   medication: string;
+  weightUnit: WeightUnit;
 }
 
 export const MEDICATION_OPTIONS = ["Wegovy", "Ozempic", "Mounjaro", "Zepbound", "Rybelsus", "Other"] as const;

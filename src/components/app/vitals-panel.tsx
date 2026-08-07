@@ -3,6 +3,7 @@ import * as React from "react";
 import { VitalsForm } from "@/components/app/forms/vitals-form";
 import { VitalsTimeline, type VitalsTimelineItem } from "@/components/app/vitals-timeline";
 import { useEntries } from "@/hooks/use-entries";
+import { useProfile } from "@/hooks/use-profile";
 import { sortByDateAsc } from "@/lib/storage";
 import type { GlucoseEntry, WeightEntry } from "@/lib/types";
 
@@ -11,6 +12,7 @@ interface VitalsPanelProps {
 }
 
 export function VitalsPanel({ onSaved }: VitalsPanelProps) {
+  const { profile } = useProfile();
   const {
     list: weights,
     add: addWeight,
@@ -91,7 +93,7 @@ export function VitalsPanel({ onSaved }: VitalsPanelProps) {
   return (
     <div className="flex flex-col gap-6">
       <VitalsForm onSubmit={handleSubmit} onSaved={onSaved} />
-      <VitalsTimeline items={items} onDelete={handleDelete} />
+      <VitalsTimeline items={items} weightUnit={profile.weightUnit} onDelete={handleDelete} />
     </div>
   );
 }

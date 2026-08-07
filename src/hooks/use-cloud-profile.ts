@@ -4,7 +4,16 @@ import { useAuth } from "@/hooks/use-auth";
 import { getSupabase } from "@/lib/supabase";
 import type { Profile } from "@/lib/types";
 
-const EMPTY_PROFILE: Profile = { name: "", photo: "", sex: "", birthday: "", height: "", weight: "", medication: "" };
+const EMPTY_PROFILE: Profile = {
+  name: "",
+  photo: "",
+  sex: "",
+  birthday: "",
+  height: "",
+  weight: "",
+  medication: "",
+  weightUnit: "kg",
+};
 
 export function useCloudProfile() {
   const { user } = useAuth();
@@ -30,7 +39,7 @@ export function useCloudProfile() {
   }, [user]);
 
   const update = React.useCallback(
-    (key: keyof Profile, value: string) => {
+    <K extends keyof Profile>(key: K, value: Profile[K]) => {
       if (!user) return;
       setProfile((prev) => {
         const next = { ...prev, [key]: value };

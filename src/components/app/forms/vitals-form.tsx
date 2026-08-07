@@ -8,7 +8,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { useProfile } from "@/hooks/use-profile";
 import { todayISO, uid } from "@/lib/storage";
+import { unitToKg } from "@/lib/units";
 import { GLUCOSE_TIMING_LABEL, type GlucoseEntry, type GlucoseTiming, type WeightEntry } from "@/lib/types";
 
 interface VitalsFormProps {
@@ -17,6 +19,7 @@ interface VitalsFormProps {
 }
 
 export function VitalsForm({ onSubmit, onSaved }: VitalsFormProps) {
+  const { profile } = useProfile();
   const [date, setDate] = React.useState(todayISO());
   const [weight, setWeight] = React.useState("");
   const [reading, setReading] = React.useState("");
@@ -32,7 +35,13 @@ export function VitalsForm({ onSubmit, onSaved }: VitalsFormProps) {
     const createdAt = Date.now();
     const entryDate = date || todayISO();
 
-    const weightEntry: WeightEntry = { id: uid(), createdAt, date: entryDate, weight: weightVal, photo };
+    const weightEntry: WeightEntry = {
+      id: uid(),
+      createdAt,
+      date: entryDate,
+      weight: unitToKg(weightVal, profile.weightUnit),
+      photo,
+    };
 
     let glucoseEntry: GlucoseEntry | null = null;
     const readingVal = parseInt(reading, 10);
@@ -72,13 +81,13 @@ export function VitalsForm({ onSubmit, onSaved }: VitalsFormProps) {
               <Input id="vitals-date" type="date" value={date} onChange={(e) => setDate(e.target.value)} required />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="vitals-weight">Weight (kg)</Label>
+              <Label htmlFor="vitals-weight">Weight ({profile.weightUnit})</Label>
               <Input
                 id="vitals-weight"
                 type="number"
                 step="0.1"
                 min="0"
-                placeholder="e.g. 82.4"
+                placeholder={profile.weightUnit === "lbs" ? "e.g. 181.7" : "e.g. 82.4"}
                 value={weight}
                 onChange={(e) => setWeight(e.target.value)}
                 required

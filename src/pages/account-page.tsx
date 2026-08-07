@@ -23,6 +23,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { useProfile } from "@/hooks/use-profile";
 import { deleteAccountData } from "@/lib/delete-account";
 import { MEDICATION_OPTIONS } from "@/lib/types";
+import { cn } from "@/lib/utils";
 
 interface AccountPageProps {
   onNavigate: (page: PageId) => void;
@@ -177,28 +178,54 @@ export function AccountPage({ onNavigate }: AccountPageProps) {
         <CardHeader>
           <CardTitle className="text-base">Height & weight</CardTitle>
         </CardHeader>
-        <CardContent className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <div className="space-y-1.5">
-            <Label htmlFor="account-height" className="text-muted-foreground text-xs">
-              Height (optional)
-            </Label>
-            <Input
-              id="account-height"
-              value={profile.height}
-              onChange={(e) => update("height", e.target.value)}
-              placeholder="—"
-            />
+        <CardContent className="flex flex-col gap-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div className="space-y-1.5">
+              <Label htmlFor="account-height" className="text-muted-foreground text-xs">
+                Height (optional)
+              </Label>
+              <Input
+                id="account-height"
+                value={profile.height}
+                onChange={(e) => update("height", e.target.value)}
+                placeholder="—"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="account-weight" className="text-muted-foreground text-xs">
+                Weight ({profile.weightUnit}, optional)
+              </Label>
+              <Input
+                id="account-weight"
+                value={profile.weight}
+                onChange={(e) => update("weight", e.target.value)}
+                placeholder="—"
+              />
+            </div>
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="account-weight" className="text-muted-foreground text-xs">
-              Weight (optional)
-            </Label>
-            <Input
-              id="account-weight"
-              value={profile.weight}
-              onChange={(e) => update("weight", e.target.value)}
-              placeholder="—"
-            />
+            <Label className="text-muted-foreground text-xs">Weight unit</Label>
+            <p className="text-muted-foreground text-xs">
+              Used everywhere weight is logged or shown — your existing logs aren't changed, just displayed
+              differently.
+            </p>
+            <div className="flex gap-2">
+              {(["kg", "lbs"] as const).map((unit) => (
+                <button
+                  key={unit}
+                  type="button"
+                  onClick={() => update("weightUnit", unit)}
+                  className={cn(
+                    "flex-1 rounded-lg border px-3 py-2 text-sm font-medium transition-colors",
+                    profile.weightUnit === unit
+                      ? "border-primary bg-primary/5 text-primary"
+                      : "text-muted-foreground hover:bg-accent",
+                  )}
+                >
+                  {unit}
+                </button>
+              ))}
+            </div>
           </div>
         </CardContent>
       </Card>
