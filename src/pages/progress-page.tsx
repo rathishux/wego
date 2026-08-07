@@ -13,9 +13,18 @@ import { Label } from "@/components/ui/label";
 import { FEED_TAG_LABEL, FEED_TAG_STYLE, buildFeed } from "@/lib/feed";
 import { useAuth } from "@/hooks/use-auth";
 import { useEntries } from "@/hooks/use-entries";
-import { useMarkers } from "@/hooks/use-markers";
-import { addDays, formatDate, formatDateTime, migrateLegacyFacePhoto, sortByDateAsc, sortByDateDesc, todayISO, uid } from "@/lib/storage";
-import type { DoseEntry, FoodEntry, GlucoseEntry, ProgressPhoto, WeightEntry } from "@/lib/types";
+import {
+  addDays,
+  formatDate,
+  formatDateTime,
+  migrateLegacyFacePhoto,
+  migrateLegacyMarkers,
+  sortByDateAsc,
+  sortByDateDesc,
+  todayISO,
+  uid,
+} from "@/lib/storage";
+import type { DoseEntry, FoodEntry, GlucoseEntry, MarkerEntry, ProgressPhoto, WeightEntry } from "@/lib/types";
 
 const chartConfig: ChartConfig = {
   weight: { label: "Weight (kg)", color: "var(--chart-2)" },
@@ -171,36 +180,160 @@ export function ProgressPage() {
   );
 }
 
+const markerChartConfig: ChartConfig = {
+  waist: { label: "Waist (cm)", color: "var(--chart-3)" },
+  sleep: { label: "Sleep (hrs)", color: "var(--chart-4)" },
+};
+
 function ProgressMarkers({ giCount }: { giCount: number }) {
-  const { markers, update } = useMarkers();
+  React.useEffect(() => {
+    migrateLegacyMarkers();
+  }, []);
+
+  const { list, add, remove, loading, error } = useEntries<MarkerEntry>("marker");
+  const [date, setDate] = React.useState(todayISO());
+  const [waist, setWaist] = React.useState("");
+  const [sleep, setSleep] = React.useState("");
+  const [mood, setMood] = React.useState("");
+
+  const ascending = sortByDateAsc(list);
+  const descending = sortByDateDesc(list);
+
+  const waistEntries = ascending.filter((m) => m.waist !== undefined);
+  const sleepEntries = ascending.filter((m) => m.sleep !== undefined);
+  const latestMood = descending.find((m) => m.mood)?.mood;
+
+  const waistDelta =
+    waistEntries.length > 1
+      ? +(waistEntries.at(-1)!.waist! - waistEntries[0].waist!).toFixed(1)
+      : null;
+  const sleepDelta =
+    sleepEntries.length > 1
+      ? +(sleepEntries.at(-1)!.sleep! - sleepEntries[0].sleep!).toFixed(1)
+      : null;
+
+  const waistChartData = waistEntries.map((m) => ({ date: formatDate(m.date), waist: m.waist }));
+  const sleepChartData = sleepEntries.map((m) => ({ date: formatDate(m.date), sleep: m.sleep }));
+
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    const waistVal = waist.trim() ? parseFloat(waist) : undefined;
+    const sleepVal = sleep.trim() ? parseFloat(sleep) : undefined;
+    const moodVal = mood.trim() || undefined;
+
+    if (waistVal === undefined && sleepVal === undefined && !moodVal) return;
+    if ((waistVal !== undefined && Number.isNaN(waistVal)) || (sleepVal !== undefined && Number.isNaN(sleepVal))) return;
+
+    add({ id: uid(), createdAt: Date.now(), date: date || todayISO(), waist: waistVal, sleep: sleepVal, mood: moodVal });
+    setWaist("");
+    setSleep("");
+    setMood("");
+    toast.success("Progress marker logged.");
+  }
 
   return (
     <Card>
       <CardHeader>
         <CardTitle>Progress markers</CardTitle>
-        <p className="text-muted-foreground text-sm">Optional non-scale wins</p>
+        <p className="text-muted-foreground text-sm">Optional non-scale wins, tracked over time</p>
       </CardHeader>
-      <CardContent>
+      <CardContent className="flex flex-col gap-5">
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+          <div className="space-y-1">
+            <p className="text-muted-foreground text-xs">Waist</p>
+            <p className="text-sm font-semibold">
+              {waistEntries.length ? `${waistEntries.at(-1)!.waist} cm` : "—"}
+            </p>
+            {waistDelta !== null && (
+              <p className="text-muted-foreground text-xs">
+                {waistDelta > 0 ? "+" : ""}
+                {waistDelta} cm since first log
+              </p>
+            )}
+          </div>
+          <div className="space-y-1">
+            <p className="text-muted-foreground text-xs">Sleep</p>
+            <p className="text-sm font-semibold">
+              {sleepEntries.length ? `${sleepEntries.at(-1)!.sleep} hrs` : "—"}
+            </p>
+            {sleepDelta !== null && (
+              <p className="text-muted-foreground text-xs">
+                {sleepDelta > 0 ? "+" : ""}
+                {sleepDelta} hrs since first log
+              </p>
+            )}
+          </div>
+          <div className="space-y-1">
+            <p className="text-muted-foreground text-xs">Mood</p>
+            <p className="text-sm font-semibold">{latestMood ?? "—"}</p>
+          </div>
+          <div className="space-y-1">
+            <p className="text-muted-foreground text-xs">GI side effects</p>
+            <p className="text-sm font-semibold">
+              {giCount} log{giCount === 1 ? "" : "s"}
+            </p>
+          </div>
+        </div>
+
+        {(waistChartData.length > 1 || sleepChartData.length > 1) && (
+          <div className="grid gap-4 sm:grid-cols-2">
+            {waistChartData.length > 1 && (
+              <ChartContainer config={markerChartConfig} className="h-32 w-full">
+                <LineChart data={waistChartData} margin={{ left: 4, right: 12, top: 8, bottom: 0 }}>
+                  <CartesianGrid vertical={false} />
+                  <XAxis dataKey="date" tickLine={false} axisLine={false} tickMargin={8} minTickGap={24} />
+                  <YAxis tickLine={false} axisLine={false} tickMargin={8} width={32} domain={["dataMin - 1", "dataMax + 1"]} />
+                  <ChartTooltip content={<ChartTooltipContent />} />
+                  <Line dataKey="waist" type="monotone" stroke="var(--color-waist)" strokeWidth={2} dot={{ r: 2.5, fill: "var(--color-waist)" }} />
+                </LineChart>
+              </ChartContainer>
+            )}
+            {sleepChartData.length > 1 && (
+              <ChartContainer config={markerChartConfig} className="h-32 w-full">
+                <LineChart data={sleepChartData} margin={{ left: 4, right: 12, top: 8, bottom: 0 }}>
+                  <CartesianGrid vertical={false} />
+                  <XAxis dataKey="date" tickLine={false} axisLine={false} tickMargin={8} minTickGap={24} />
+                  <YAxis tickLine={false} axisLine={false} tickMargin={8} width={32} domain={["dataMin - 1", "dataMax + 1"]} />
+                  <ChartTooltip content={<ChartTooltipContent />} />
+                  <Line dataKey="sleep" type="monotone" stroke="var(--color-sleep)" strokeWidth={2} dot={{ r: 2.5, fill: "var(--color-sleep)" }} />
+                </LineChart>
+              </ChartContainer>
+            )}
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-3 sm:grid-cols-5 sm:items-end">
+          <div className="space-y-1.5">
+            <Label htmlFor="marker-date" className="text-muted-foreground text-xs">
+              Date
+            </Label>
+            <Input id="marker-date" type="date" value={date} onChange={(e) => setDate(e.target.value)} />
+          </div>
           <div className="space-y-1.5">
             <Label htmlFor="marker-waist" className="text-muted-foreground text-xs">
-              Waist
+              Waist (cm)
             </Label>
             <Input
               id="marker-waist"
-              value={markers.waist}
-              onChange={(e) => update("waist", e.target.value)}
+              type="number"
+              step="0.1"
+              min="0"
+              value={waist}
+              onChange={(e) => setWaist(e.target.value)}
               placeholder="—"
             />
           </div>
           <div className="space-y-1.5">
             <Label htmlFor="marker-sleep" className="text-muted-foreground text-xs">
-              Sleep
+              Sleep (hrs)
             </Label>
             <Input
               id="marker-sleep"
-              value={markers.sleep}
-              onChange={(e) => update("sleep", e.target.value)}
+              type="number"
+              step="0.1"
+              min="0"
+              value={sleep}
+              onChange={(e) => setSleep(e.target.value)}
               placeholder="—"
             />
           </div>
@@ -210,18 +343,43 @@ function ProgressMarkers({ giCount }: { giCount: number }) {
             </Label>
             <Input
               id="marker-mood"
-              value={markers.mood}
-              onChange={(e) => update("mood", e.target.value)}
+              value={mood}
+              onChange={(e) => setMood(e.target.value)}
               placeholder="—"
             />
           </div>
-          <div className="space-y-1.5">
-            <p className="text-muted-foreground text-xs">GI side effects</p>
-            <p className="flex h-9 items-center text-sm font-medium">
-              {giCount} log{giCount === 1 ? "" : "s"}
-            </p>
+          <Button type="submit" size="sm">
+            Log
+          </Button>
+        </form>
+
+        {loading ? (
+          <p className="text-muted-foreground text-sm">Loading…</p>
+        ) : error ? (
+          <p className="text-destructive text-sm">Couldn't load your markers: {error}</p>
+        ) : descending.length > 0 ? (
+          <div className="flex flex-col gap-2">
+            {descending.map((m) => (
+              <div key={m.id} className="flex items-center justify-between gap-2 rounded-lg border p-2.5 text-sm">
+                <div className="flex min-w-0 flex-1 flex-wrap items-center gap-x-3 gap-y-1">
+                  <span className="text-muted-foreground text-xs">{formatDate(m.date)}</span>
+                  {m.waist !== undefined && <span>Waist {m.waist} cm</span>}
+                  {m.sleep !== undefined && <span>Sleep {m.sleep} hrs</span>}
+                  {m.mood && <span className="truncate">Mood: {m.mood}</span>}
+                </div>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  aria-label="Delete marker entry"
+                  onClick={() => remove(m.id)}
+                  className="text-muted-foreground hover:text-destructive size-7 shrink-0"
+                >
+                  <Trash2 className="size-3.5" />
+                </Button>
+              </div>
+            ))}
           </div>
-        </div>
+        ) : null}
       </CardContent>
     </Card>
   );

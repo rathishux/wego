@@ -63,9 +63,11 @@ By default the app has no login and needs none — every page works immediately 
 In addition to the Community feature's setup (below), run one more script:
 
 1. Complete steps 1–2 of the Community setup below (Supabase project + enabling sign-in) if you haven't already — this reuses the same project.
-2. In the **SQL Editor**, additionally run `supabase/schema_accounts.sql` — it creates the private `entries` and `user_markers` tables and their row-level security policies, separate from the Community feature's public tables.
+2. In the **SQL Editor**, additionally run `supabase/schema_accounts.sql` — it creates the private `entries` table (and the now-legacy `user_markers` table) and their row-level security policies, separate from the Community feature's public tables.
 3. Also run `supabase/schema_v2.sql` (see the Community setup below) — among other things, it lets `entries` accept the You timeline's post type.
-4. Run `NOTIFY pgrst, 'reload schema';` once afterward (same as the Community setup) so the API picks up the new tables immediately.
+4. Also run `supabase/schema_v3.sql` — adds the `user_profile` table for optional account fields (name/sex/birthday/height/weight).
+5. Also run `supabase/schema_v4.sql` — lets `entries` accept the `marker` type (waist/sleep/mood are now dated history rows here instead of a single snapshot in `user_markers`, which the app no longer writes to).
+6. Run `NOTIFY pgrst, 'reload schema';` once afterward (same as the Community setup) so the API picks up the new tables immediately.
 
 No new environment variables are needed — it reuses `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY` from the Community setup.
 
@@ -142,7 +144,7 @@ This repo includes the Capacitor config and the generated `android/` and `ios/` 
 - `src/lib/supabase.ts` — the shared Supabase client, used by both the Community feature and cloud sync
 - `src/lib/community/` — the Community feature's backend abstraction (Supabase-backed when configured, local demo mode otherwise)
 - `src/lib/migrate-local-data.ts` — the one-time local-to-cloud data import that runs on first sign-in
-- `src/hooks/use-auth.tsx`, `use-entries.ts`, `use-cloud-list.ts`, `use-cloud-markers.ts`, `use-markers.ts` — auth state and the local/cloud data hooks that transparently swap based on whether a backend is configured
+- `src/hooks/use-auth.tsx`, `use-entries.ts`, `use-cloud-list.ts`, `use-local-list.ts` — auth state and the local/cloud data hooks that transparently swap based on whether a backend is configured (dose/weight/glucose/food/markers/progress photos/You posts all go through this same generic entries interface)
 - `supabase/schema.sql` — database schema, RLS policies, and storage bucket setup for the Community feature
 - `supabase/schema_accounts.sql` — database schema and RLS policies for private, per-account cloud-synced tracking data
 - `supabase/schema_v2.sql` — the You timeline's entry type, optional Community photos, and Community comments

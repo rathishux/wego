@@ -37,6 +37,13 @@ export type LogType = "dose" | "weight" | "glucose" | "food";
 
 export type AnyEntry = DoseEntry | WeightEntry | GlucoseEntry | FoodEntry;
 
+export interface MarkerEntry extends BaseEntry {
+  waist?: number;
+  sleep?: number;
+  mood?: string;
+}
+
+/** @deprecated Legacy single-snapshot shape, kept only to migrate old data into MarkerEntry rows. */
 export interface Markers {
   waist: string;
   sleep: string;
