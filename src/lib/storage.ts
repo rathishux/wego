@@ -11,6 +11,7 @@ export const KEYS = {
   notificationPrefs: STORAGE_PREFIX + "notificationPrefs",
   progressPhotos: STORAGE_PREFIX + "progressPhotos",
   youPosts: STORAGE_PREFIX + "youPosts",
+  onboardingComplete: STORAGE_PREFIX + "onboardingComplete",
 } as const;
 
 const LEGACY_FACE_PHOTO_KEY = STORAGE_PREFIX + "markers.face";

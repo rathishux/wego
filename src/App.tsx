@@ -7,10 +7,12 @@ import { SplashIntro } from "@/components/app/splash-intro";
 import { useAuth } from "@/hooks/use-auth";
 import { useNativeShell } from "@/hooks/use-native-shell";
 import { migrateLocalDataToCloud } from "@/lib/migrate-local-data";
+import { KEYS, loadValue, saveValue } from "@/lib/storage";
 import type { LogType } from "@/lib/types";
 import { DashboardPage } from "@/pages/dashboard-page";
 import { LogEntryPage } from "@/pages/log-entry-page";
 import { LoginPage } from "@/pages/login-page";
+import { OnboardingPage } from "@/pages/onboarding-page";
 import { TipsPage } from "@/pages/tips-page";
 
 const ProgressPage = React.lazy(() =>
@@ -105,6 +107,7 @@ function MainApp() {
   const { cloudEnabled, user } = useAuth();
   const [page, setPage] = React.useState<PageId>("dashboard");
   const [logTab, setLogTab] = React.useState<LogType>("dose");
+  const [onboardingDone, setOnboardingDone] = React.useState(() => loadValue(KEYS.onboardingComplete, false));
 
   React.useEffect(() => {
     if (!cloudEnabled || !user) return;
@@ -125,6 +128,17 @@ function MainApp() {
   }
 
   useNativeShell(page, navigate);
+
+  if (!onboardingDone) {
+    return (
+      <OnboardingPage
+        onComplete={() => {
+          saveValue(KEYS.onboardingComplete, true);
+          setOnboardingDone(true);
+        }}
+      />
+    );
+  }
 
   return (
     <AppShell active={page} onNavigate={navigate}>
