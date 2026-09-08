@@ -10,6 +10,7 @@ import { migrateLocalDataToCloud } from "@/lib/migrate-local-data";
 import { KEYS, loadValue, saveValue } from "@/lib/storage";
 import type { LogType } from "@/lib/types";
 import { DashboardPage } from "@/pages/dashboard-page";
+import { LegalAcceptancePage } from "@/pages/legal-acceptance-page";
 import { LogEntryPage } from "@/pages/log-entry-page";
 import { LoginPage } from "@/pages/login-page";
 import { OnboardingPage } from "@/pages/onboarding-page";
@@ -81,9 +82,19 @@ export default function App() {
 
   const { cloudEnabled, user, loading } = useAuth();
   const [showSplash, setShowSplash] = React.useState(true);
+  const [legalAccepted, setLegalAccepted] = React.useState(() => loadValue(KEYS.legalAccepted, false));
 
   let content: React.ReactNode;
-  if (cloudEnabled && loading) {
+  if (!legalAccepted) {
+    content = (
+      <LegalAcceptancePage
+        onAccept={() => {
+          saveValue(KEYS.legalAccepted, true);
+          setLegalAccepted(true);
+        }}
+      />
+    );
+  } else if (cloudEnabled && loading) {
     content = (
       <div className="bg-background flex min-h-svh items-center justify-center">
         <p className="text-muted-foreground text-sm">Loading…</p>
