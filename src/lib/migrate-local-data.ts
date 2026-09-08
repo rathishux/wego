@@ -1,24 +1,28 @@
 import { getSupabase } from "@/lib/supabase";
-import { KEYS, loadList, loadValue } from "@/lib/storage";
-import type { DoseEntry, FoodEntry, GlucoseEntry, Markers, ProgressPhoto, WeightEntry } from "@/lib/types";
+import { KEYS, loadList, loadValue, migrateLegacyMarkers } from "@/lib/storage";
+import type { DoseEntry, FoodEntry, GlucoseEntry, MarkerEntry, Profile, ProgressPhoto, WeightEntry } from "@/lib/types";
 
 const MIGRATION_FLAG_KEY = "steady.cloudMigrationDone";
 
 export async function migrateLocalDataToCloud(userId: string): Promise<number | null> {
   if (localStorage.getItem(MIGRATION_FLAG_KEY) === userId) return null;
 
+  migrateLegacyMarkers();
+
   const doses = loadList<DoseEntry>(KEYS.doses);
   const weights = loadList<WeightEntry>(KEYS.weights);
   const glucose = loadList<GlucoseEntry>(KEYS.glucose);
   const food = loadList<FoodEntry>(KEYS.food);
   const progressPhotos = loadList<ProgressPhoto>(KEYS.progressPhotos);
-  const markers = loadValue<Markers | null>(KEYS.markers, null);
+  const markerEntries = loadList<MarkerEntry>(KEYS.markerEntries);
+  const profile = loadValue<Profile | null>(KEYS.profile, null);
 
   const rows = [
     ...doses.map((e) => ({ id: e.id, user_id: userId, type: "dose", created_at: e.createdAt, date: e.date, data: e })),
     ...weights.map((e) => ({ id: e.id, user_id: userId, type: "weight", created_at: e.createdAt, date: e.date, data: e })),
     ...glucose.map((e) => ({ id: e.id, user_id: userId, type: "glucose", created_at: e.createdAt, date: e.date, data: e })),
     ...food.map((e) => ({ id: e.id, user_id: userId, type: "food", created_at: e.createdAt, date: e.date, data: e })),
+    ...markerEntries.map((e) => ({ id: e.id, user_id: userId, type: "marker", created_at: e.createdAt, date: e.date, data: e })),
     ...progressPhotos.map((e) => ({
       id: e.id,
       user_id: userId,
@@ -36,10 +40,10 @@ export async function migrateLocalDataToCloud(userId: string): Promise<number | 
     if (error) throw new Error(error.message);
   }
 
-  if (markers && (markers.waist || markers.sleep || markers.mood)) {
+  if (profile && (profile.name || profile.photo || profile.sex || profile.birthday || profile.height || profile.weight || profile.medication)) {
     const { error } = await supabase
-      .from("user_markers")
-      .upsert({ user_id: userId, data: markers, updated_at: new Date().toISOString() });
+      .from("user_profile")
+      .upsert({ user_id: userId, data: profile, updated_at: new Date().toISOString() });
     if (error) throw new Error(error.message);
   }
 

@@ -12,6 +12,23 @@ dist
 dist-ssr
 *.local
 
+# Capacitor native projects — the android/ and ios/ project files are
+# committed, but build output and the web assets cap sync copies in are not
+# (run `npm run cap:sync` to regenerate them).
+android/.gradle
+android/app/build
+android/build
+android/local.properties
+android/app/src/main/assets/public
+android/app/src/main/assets/capacitor.config.json
+android/capacitor-cordova-android-plugins/build
+ios/App/App/public
+ios/App/App/capacitor.config.json
+ios/App/Pods
+ios/App/Podfile.lock
+ios/App/output
+ios/DerivedData
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

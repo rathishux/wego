@@ -2,13 +2,22 @@ import * as React from "react";
 
 import { useAuth } from "@/hooks/use-auth";
 import { getSupabase } from "@/lib/supabase";
-import type { Markers } from "@/lib/types";
+import type { Profile } from "@/lib/types";
 
-const EMPTY_MARKERS: Markers = { waist: "", sleep: "", mood: "" };
+const EMPTY_PROFILE: Profile = {
+  name: "",
+  photo: "",
+  sex: "",
+  birthday: "",
+  height: "",
+  weight: "",
+  medication: "",
+  weightUnit: "kg",
+};
 
-export function useCloudMarkers() {
+export function useCloudProfile() {
   const { user } = useAuth();
-  const [markers, setMarkers] = React.useState<Markers>(EMPTY_MARKERS);
+  const [profile, setProfile] = React.useState<Profile>(EMPTY_PROFILE);
   const [loading, setLoading] = React.useState(true);
 
   React.useEffect(() => {
@@ -19,24 +28,24 @@ export function useCloudMarkers() {
     setLoading(true);
     const supabase = getSupabase();
     supabase
-      .from("user_markers")
+      .from("user_profile")
       .select("data")
       .eq("user_id", user.id)
       .maybeSingle()
       .then(({ data }) => {
-        if (data) setMarkers({ ...EMPTY_MARKERS, ...(data.data as Markers) });
+        if (data) setProfile({ ...EMPTY_PROFILE, ...(data.data as Profile) });
         setLoading(false);
       });
   }, [user]);
 
   const update = React.useCallback(
-    (key: keyof Markers, value: string) => {
+    <K extends keyof Profile>(key: K, value: Profile[K]) => {
       if (!user) return;
-      setMarkers((prev) => {
+      setProfile((prev) => {
         const next = { ...prev, [key]: value };
         const supabase = getSupabase();
         supabase
-          .from("user_markers")
+          .from("user_profile")
           .upsert({ user_id: user.id, data: next, updated_at: new Date().toISOString() })
           .then();
         return next;
@@ -45,5 +54,5 @@ export function useCloudMarkers() {
     [user],
   );
 
-  return { markers, update, loading };
+  return { profile, update, loading };
 }

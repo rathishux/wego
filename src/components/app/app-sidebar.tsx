@@ -1,6 +1,5 @@
-import { Leaf } from "lucide-react";
-
 import { AccountMenu } from "@/components/app/account-menu";
+import { LogoMark } from "@/components/app/logo-mark";
 import { NAV_ITEMS, type PageId } from "@/components/app/nav-items";
 import { useAuth } from "@/hooks/use-auth";
 import { cn } from "@/lib/utils";
@@ -11,17 +10,17 @@ interface AppSidebarProps {
 }
 
 export function AppSidebar({ active, onNavigate }: AppSidebarProps) {
-  const { cloudEnabled, user, signOut } = useAuth();
+  const { cloudEnabled, user } = useAuth();
   const signedIn = cloudEnabled && user;
 
   return (
     <div className="flex h-full flex-col gap-6 p-4">
       <div className="flex items-center gap-2 px-2 pt-2">
         <div className="bg-primary text-primary-foreground flex size-8 shrink-0 items-center justify-center rounded-lg">
-          <Leaf className="size-4.5" />
+          <LogoMark className="size-5.5" />
         </div>
         <div className="leading-tight">
-          <p className="text-sm font-semibold">Steady</p>
+          <p className="text-sm font-semibold">NivYou</p>
           <p className="text-muted-foreground text-xs">Wegovy & prediabetes</p>
         </div>
       </div>
@@ -49,11 +48,7 @@ export function AppSidebar({ active, onNavigate }: AppSidebarProps) {
       </nav>
 
       <div className="mt-auto px-1">
-        <AccountMenu
-          user={signedIn ? user : null}
-          onNavigate={onNavigate}
-          onSignOut={signedIn ? () => signOut() : undefined}
-        />
+        <AccountMenu user={signedIn ? user : null} onNavigate={onNavigate} />
       </div>
     </div>
   );

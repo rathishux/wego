@@ -1,5 +1,4 @@
 import * as React from "react";
-import { toast } from "sonner";
 
 import { EntryList } from "@/components/app/entry-list";
 import { PhotoCapture } from "@/components/app/photo-capture";
@@ -13,7 +12,7 @@ import { useEntries } from "@/hooks/use-entries";
 import { sortByDateDesc, todayISO, uid } from "@/lib/storage";
 import type { FoodEntry } from "@/lib/types";
 
-export function FoodForm({ onSaved }: { onSaved: () => void }) {
+export function FoodForm({ onSaved }: { onSaved: (date: string) => void }) {
   const { list, add, remove } = useEntries<FoodEntry>("food");
   const [date, setDate] = React.useState(todayISO());
   const [meal, setMeal] = React.useState("");
@@ -26,10 +25,11 @@ export function FoodForm({ onSaved }: { onSaved: () => void }) {
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    const finalDate = date || todayISO();
     add({
       id: uid(),
       createdAt: Date.now(),
-      date: date || todayISO(),
+      date: finalDate,
       meal: meal.trim(),
       protein,
       fiber,
@@ -45,8 +45,7 @@ export function FoodForm({ onSaved }: { onSaved: () => void }) {
     setWater("");
     setNotes("");
     setPhoto(undefined);
-    toast.success("Food log saved.");
-    onSaved();
+    onSaved(finalDate);
   }
 
   const rows = sortByDateDesc(list).map((f) => ({

@@ -1,12 +1,16 @@
 import {
+  Bell,
   BookOpenText,
   Camera,
   FileText,
+  HeartPulse,
   LayoutDashboard,
   ListPlus,
   Settings,
   ShieldCheck,
   TrendingUp,
+  User,
+  UserCog,
   Users,
   type LucideIcon,
 } from "lucide-react";
@@ -19,7 +23,11 @@ export type PageId =
   | "community"
   | "tips"
   | "settings"
+  | "profile"
+  | "account"
+  | "notifications"
   | "privacy"
+  | "healthPrivacy"
   | "terms";
 
 export interface NavItem {
@@ -51,7 +59,7 @@ export const NAV_ITEMS: NavItem[] = [
   {
     id: "you",
     label: "You",
-    description: "Your private visual timeline — photos, weight, face and body changes",
+    description: "Your private visual timeline",
     icon: Camera,
   },
   {
@@ -68,6 +76,10 @@ export const NAV_ITEMS: NavItem[] = [
   },
 ];
 
+// The 5 primary destinations shown in the mobile bottom tab bar (iOS/Android
+// convention caps out around 5 tabs). Tips moves into Settings on mobile.
+export const MOBILE_TAB_ITEMS: NavItem[] = NAV_ITEMS.filter((item) => item.id !== "tips");
+
 // Reachable from the account menu / Settings, not shown in the main sidebar nav.
 export const SECONDARY_ITEMS: NavItem[] = [
   {
@@ -77,15 +89,39 @@ export const SECONDARY_ITEMS: NavItem[] = [
     icon: Settings,
   },
   {
+    id: "profile",
+    label: "Profile",
+    description: "Your display picture",
+    icon: User,
+  },
+  {
+    id: "account",
+    label: "Account",
+    description: "Name, sex, birthday, height, and weight",
+    icon: UserCog,
+  },
+  {
+    id: "notifications",
+    label: "Notifications",
+    description: "Alerts and dose reminders",
+    icon: Bell,
+  },
+  {
     id: "privacy",
     label: "Privacy Policy",
-    description: "What data Steady stores and how it's used",
+    description: "What data NivYou stores and how it's used",
     icon: ShieldCheck,
+  },
+  {
+    id: "healthPrivacy",
+    label: "Health Data Privacy",
+    description: "How your health data specifically is handled",
+    icon: HeartPulse,
   },
   {
     id: "terms",
     label: "Terms & Conditions",
-    description: "Rules for using Steady",
+    description: "Rules for using NivYou",
     icon: FileText,
   },
 ];

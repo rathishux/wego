@@ -3,7 +3,8 @@ import { Camera, Droplets, Trash2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { formatDate } from "@/lib/storage";
-import { GLUCOSE_TIMING_LABEL, type GlucoseEntry, type WeightEntry } from "@/lib/types";
+import { GLUCOSE_TIMING_LABEL, type GlucoseEntry, type WeightEntry, type WeightUnit } from "@/lib/types";
+import { kgToUnit } from "@/lib/units";
 import { cn } from "@/lib/utils";
 
 export interface VitalsTimelineItem {
@@ -17,10 +18,11 @@ export interface VitalsTimelineItem {
 
 interface VitalsTimelineProps {
   items: VitalsTimelineItem[];
+  weightUnit: WeightUnit;
   onDelete: (item: VitalsTimelineItem) => void;
 }
 
-export function VitalsTimeline({ items, onDelete }: VitalsTimelineProps) {
+export function VitalsTimeline({ items, weightUnit, onDelete }: VitalsTimelineProps) {
   if (items.length === 0) {
     return <p className="text-muted-foreground py-2 text-sm">No weight or glucose entries yet.</p>;
   }
@@ -73,7 +75,9 @@ export function VitalsTimeline({ items, onDelete }: VitalsTimelineProps) {
                 <div className="mt-2 flex items-center justify-between gap-4">
                   <div className="flex flex-col gap-1">
                     {item.weight && (
-                      <p className="text-chart-2 text-2xl font-bold">{item.weight.weight} kg</p>
+                      <p className="text-chart-2 text-2xl font-bold">
+                        {kgToUnit(item.weight.weight, weightUnit)} {weightUnit}
+                      </p>
                     )}
                     {item.glucose && (
                       <p className={cn("text-chart-3 font-semibold", item.weight ? "text-base" : "text-2xl")}>
@@ -108,7 +112,7 @@ export function VitalsTimeline({ items, onDelete }: VitalsTimelineProps) {
                             )}
                           >
                             {item.deltaFromPrevious > 0 ? "+" : ""}
-                            {item.deltaFromPrevious} kg
+                            {kgToUnit(item.deltaFromPrevious, weightUnit)} {weightUnit}
                           </span>{" "}
                           vs previous weigh-in
                         </p>

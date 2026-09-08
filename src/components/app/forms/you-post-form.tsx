@@ -3,7 +3,6 @@ import { toast } from "sonner";
 
 import { PhotoCaptureButton } from "@/components/app/photo-capture-button";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { uid } from "@/lib/storage";
@@ -15,7 +14,6 @@ interface YouPostFormProps {
 
 export function YouPostForm({ onAdd }: YouPostFormProps) {
   const [photo, setPhoto] = React.useState<string>();
-  const [title, setTitle] = React.useState("");
   const [description, setDescription] = React.useState("");
 
   function handleSubmit(e: React.FormEvent) {
@@ -25,11 +23,9 @@ export function YouPostForm({ onAdd }: YouPostFormProps) {
       id: uid(),
       createdAt: Date.now(),
       photo,
-      title: title.trim() || undefined,
       description: description.trim() || undefined,
     });
     setPhoto(undefined);
-    setTitle("");
     setDescription("");
     toast.success("Added to your timeline.");
   }
@@ -52,16 +48,6 @@ export function YouPostForm({ onAdd }: YouPostFormProps) {
       ) : (
         <PhotoCaptureButton onCapture={setPhoto} facingMode="user" />
       )}
-
-      <div className="space-y-1.5">
-        <Label htmlFor="you-title">Title</Label>
-        <Input
-          id="you-title"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          placeholder="Optional — e.g. Week 8"
-        />
-      </div>
 
       <div className="space-y-1.5">
         <Label htmlFor="you-description">Description</Label>

@@ -1,7 +1,7 @@
-import { Leaf } from "lucide-react";
 import * as React from "react";
 import { toast } from "sonner";
 
+import { LogoMark } from "@/components/app/logo-mark";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -48,9 +48,9 @@ export function LoginPage() {
         <CardHeader>
           <div className="mb-2 flex items-center gap-2">
             <div className="bg-primary text-primary-foreground flex size-8 items-center justify-center rounded-lg">
-              <Leaf className="size-4.5" />
+              <LogoMark className="size-5.5" />
             </div>
-            <span className="font-semibold">Steady</span>
+            <span className="font-semibold">NivYou</span>
           </div>
           <CardTitle>{step === "email" ? "Sign in" : "Enter your code"}</CardTitle>
           <CardDescription>

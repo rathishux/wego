@@ -1,12 +1,15 @@
-import { ArrowRight, Camera, Droplets, Syringe, Weight } from "lucide-react";
+import { ArrowRight, Camera, CalendarCheck, Droplets, Syringe, Weight } from "lucide-react";
 
 import type { PageId } from "@/components/app/nav-items";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useEntries } from "@/hooks/use-entries";
+import { useProfile } from "@/hooks/use-profile";
 import { FEED_TAG_LABEL, FEED_TAG_STYLE, buildFeed } from "@/lib/feed";
 import { addDays, formatDateShort, sortByDateAsc, sortByDateDesc } from "@/lib/storage";
+import { calculateLoggingStreak } from "@/lib/streak";
+import { kgToUnit } from "@/lib/units";
 import type { DoseEntry, FoodEntry, GlucoseEntry, LogType, WeightEntry } from "@/lib/types";
 
 interface DashboardPageProps {
@@ -14,6 +17,7 @@ interface DashboardPageProps {
 }
 
 export function DashboardPage({ onNavigate }: DashboardPageProps) {
+  const { profile } = useProfile();
   const { list: doseList, loading: doseLoading, error: doseError } = useEntries<DoseEntry>("dose");
   const { list: weightList, loading: weightLoading, error: weightError } = useEntries<WeightEntry>("weight");
   const { list: glucoseList, loading: glucoseLoading, error: glucoseError } = useEntries<GlucoseEntry>("glucose");
@@ -32,10 +36,18 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
 
   const lastWeight = weights.at(-1);
   const firstWeight = weights[0];
-  const weightDelta =
+  const weightDeltaKg =
     weights.length > 1 && lastWeight ? +(lastWeight.weight - firstWeight.weight).toFixed(1) : null;
+  const weightDelta = weightDeltaKg === null ? null : kgToUnit(weightDeltaKg, profile.weightUnit);
 
-  const feed = buildFeed(doses, weights, glucose, foodList).slice(0, 8);
+  const feed = buildFeed(doses, weights, glucose, foodList, profile.weightUnit).slice(0, 8);
+
+  const streak = calculateLoggingStreak([
+    ...doseList.map((e) => e.date),
+    ...weightList.map((e) => e.date),
+    ...glucoseList.map((e) => e.date),
+    ...foodList.map((e) => e.date),
+  ]);
 
   if (dataLoading) {
     return <p className="text-muted-foreground text-sm">Loading your dashboard…</p>;
@@ -47,6 +59,13 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
 
   return (
     <div className="flex flex-col gap-6">
+      {streak >= 2 && (
+        <div className="text-muted-foreground flex items-center gap-1.5 text-sm">
+          <CalendarCheck className="size-4" />
+          <span>{streak}-day logging streak</span>
+        </div>
+      )}
+
       <Card className="border-primary/30 bg-primary/5">
         <CardHeader>
           <div className="flex items-start justify-between gap-4">
@@ -55,7 +74,7 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
                 <Syringe className="size-5" />
               </div>
               <div>
-                <CardTitle>Next dose</CardTitle>
+                <CardTitle>Next dose{profile.medication ? ` · ${profile.medication}` : ""}</CardTitle>
                 <p className="text-muted-foreground text-sm">Estimated from your last injection</p>
               </div>
             </div>
@@ -91,8 +110,10 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
           </CardHeader>
           <CardContent>
             <div className="flex items-baseline gap-1.5">
-              <span className="text-3xl font-bold">{lastWeight ? lastWeight.weight : "—"}</span>
-              <span className="text-muted-foreground text-sm">kg</span>
+              <span className="text-3xl font-bold">
+                {lastWeight ? kgToUnit(lastWeight.weight, profile.weightUnit) : "—"}
+              </span>
+              <span className="text-muted-foreground text-sm">{profile.weightUnit}</span>
             </div>
             {weightDelta === null ? (
               <Badge variant="secondary" className="mt-2">
@@ -104,7 +125,7 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
                 className={`mt-2 ${weightDelta < 0 ? "bg-primary/10 text-primary" : weightDelta > 0 ? "bg-destructive/10 text-destructive" : ""}`}
               >
                 {weightDelta > 0 ? "+" : ""}
-                {weightDelta} kg since first log
+                {weightDelta} {profile.weightUnit} since first log
               </Badge>
             )}
           </CardContent>
