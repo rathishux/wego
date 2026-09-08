@@ -8,7 +8,7 @@ import { sortByDateAsc } from "@/lib/storage";
 import type { GlucoseEntry, WeightEntry } from "@/lib/types";
 
 interface VitalsPanelProps {
-  onSaved: () => void;
+  onSaved: (date: string) => void;
 }
 
 export function VitalsPanel({ onSaved }: VitalsPanelProps) {

@@ -1,5 +1,4 @@
 import * as React from "react";
-import { toast } from "sonner";
 
 import { PhotoCapture } from "@/components/app/photo-capture";
 import { Button } from "@/components/ui/button";
@@ -15,7 +14,7 @@ import { GLUCOSE_TIMING_LABEL, type GlucoseEntry, type GlucoseTiming, type Weigh
 
 interface VitalsFormProps {
   onSubmit: (result: { weight: WeightEntry; glucose: GlucoseEntry | null }) => void;
-  onSaved: () => void;
+  onSaved: (date: string) => void;
 }
 
 export function VitalsForm({ onSubmit, onSaved }: VitalsFormProps) {
@@ -63,8 +62,7 @@ export function VitalsForm({ onSubmit, onSaved }: VitalsFormProps) {
     setReading("");
     setNotes("");
     setPhoto(undefined);
-    toast.success(glucoseEntry ? "Weight and glucose logged." : "Weight logged.");
-    onSaved();
+    onSaved(entryDate);
   }
 
   return (

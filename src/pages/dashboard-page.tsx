@@ -1,4 +1,4 @@
-import { ArrowRight, Camera, Droplets, Syringe, Weight } from "lucide-react";
+import { ArrowRight, Camera, CalendarCheck, Droplets, Syringe, Weight } from "lucide-react";
 
 import type { PageId } from "@/components/app/nav-items";
 import { Badge } from "@/components/ui/badge";
@@ -8,6 +8,7 @@ import { useEntries } from "@/hooks/use-entries";
 import { useProfile } from "@/hooks/use-profile";
 import { FEED_TAG_LABEL, FEED_TAG_STYLE, buildFeed } from "@/lib/feed";
 import { addDays, formatDateShort, sortByDateAsc, sortByDateDesc } from "@/lib/storage";
+import { calculateLoggingStreak } from "@/lib/streak";
 import { kgToUnit } from "@/lib/units";
 import type { DoseEntry, FoodEntry, GlucoseEntry, LogType, WeightEntry } from "@/lib/types";
 
@@ -41,6 +42,13 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
 
   const feed = buildFeed(doses, weights, glucose, foodList, profile.weightUnit).slice(0, 8);
 
+  const streak = calculateLoggingStreak([
+    ...doseList.map((e) => e.date),
+    ...weightList.map((e) => e.date),
+    ...glucoseList.map((e) => e.date),
+    ...foodList.map((e) => e.date),
+  ]);
+
   if (dataLoading) {
     return <p className="text-muted-foreground text-sm">Loading your dashboard…</p>;
   }
@@ -51,6 +59,13 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
 
   return (
     <div className="flex flex-col gap-6">
+      {streak >= 2 && (
+        <div className="text-muted-foreground flex items-center gap-1.5 text-sm">
+          <CalendarCheck className="size-4" />
+          <span>{streak}-day logging streak</span>
+        </div>
+      )}
+
       <Card className="border-primary/30 bg-primary/5">
         <CardHeader>
           <div className="flex items-start justify-between gap-4">

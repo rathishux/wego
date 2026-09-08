@@ -28,7 +28,7 @@ const SITE_OPTIONS = [
 const SERIOUS_SIDE_EFFECT_ALERT =
   "What you described can be a sign of something that needs prompt medical attention — please contact your doctor or seek care soon.";
 
-export function DoseForm({ onSaved }: { onSaved: () => void }) {
+export function DoseForm({ onSaved }: { onSaved: (date: string) => void }) {
   const { list, add, remove } = useEntries<DoseEntry>("dose");
   const [date, setDate] = React.useState(todayISO());
   const [dose, setDose] = React.useState<string>(DOSE_STEPS[0]);
@@ -42,10 +42,11 @@ export function DoseForm({ onSaved }: { onSaved: () => void }) {
     e.preventDefault();
     const finalSite = site === "Other" ? customSite.trim() : site;
     const trimmedSideEffects = sideEffects.trim();
+    const finalDate = date || todayISO();
     add({
       id: uid(),
       createdAt: Date.now(),
-      date: date || todayISO(),
+      date: finalDate,
       dose,
       site: finalSite,
       sideEffects: trimmedSideEffects,
@@ -58,11 +59,11 @@ export function DoseForm({ onSaved }: { onSaved: () => void }) {
     setNotes("");
     setPhoto(undefined);
     if (isSeriousSideEffect(trimmedSideEffects)) {
+      // A safety warning takes priority — skip the celebratory post-save toast so it doesn't get buried.
       toast.warning(SERIOUS_SIDE_EFFECT_ALERT, { duration: 10000 });
     } else {
-      toast.success("Dose logged.");
+      onSaved(finalDate);
     }
-    onSaved();
   }
 
   const rows = sortByDateDesc(list).map((d) => ({
