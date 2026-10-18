@@ -7,7 +7,7 @@ interface PrivacyPolicyPageProps {
 
 export function PrivacyPolicyPage({ onNavigate }: PrivacyPolicyPageProps) {
   return (
-    <LegalPageLayout onNavigate={onNavigate} lastUpdated="July 19, 2026">
+    <LegalPageLayout onNavigate={onNavigate} lastUpdated="October 18, 2026">
       <section>
         <h2>Overview</h2>
         <p>
@@ -65,6 +65,19 @@ export function PrivacyPolicyPage({ onNavigate }: PrivacyPolicyPageProps) {
           <li>You can sign out at any time</li>
           <li>You can use NivYou without ever creating an account by not configuring cloud sync</li>
         </ul>
+      </section>
+
+      <section>
+        <h2>Delete your account and data</h2>
+        <p>
+          If you've signed in with cloud sync, you can permanently delete your NivYou account and every
+          record tied to it at any time: open NivYou, sign in, go to Settings → Account, scroll to the
+          bottom, and select "Delete my account." This removes your dose, weight, glucose, and food
+          entries, progress markers, You timeline photos, Community posts and comments, and profile
+          details immediately and completely — nothing is retained afterward. If you're using NivYou
+          without an account (local-only mode), deleting the app removes all your data, since nothing was
+          ever sent anywhere. See the Health Data Privacy notice for more detail.
+        </p>
       </section>
 
       <section>
