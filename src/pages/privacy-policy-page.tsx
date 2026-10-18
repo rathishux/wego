@@ -11,9 +11,9 @@ export function PrivacyPolicyPage({ onNavigate }: PrivacyPolicyPageProps) {
       <section>
         <h2>Overview</h2>
         <p>
-          NivYou is a personal tracker for Wegovy (semaglutide) doses, weight, blood glucose, and
-          food/water logging, plus a private visual timeline ("You") and an opt-in public support feed
-          ("Community"). This policy explains what data NivYou collects and how it's stored.
+          NivYou is a personal GLP-1 journey tracker: log your doses, weight, blood glucose, and food and
+          water, with a private visual timeline ("You") and an opt-in public support feed ("Community").
+          This policy explains what data NivYou collects and how it's stored.
         </p>
       </section>
 
