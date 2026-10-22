@@ -7,7 +7,7 @@ interface HealthDataPrivacyPageProps {
 
 export function HealthDataPrivacyPage({ onNavigate }: HealthDataPrivacyPageProps) {
   return (
-    <LegalPageLayout onNavigate={onNavigate} title="Health Data Privacy" lastUpdated="July 23, 2026">
+    <LegalPageLayout onNavigate={onNavigate} title="Health Data Privacy" lastUpdated="October 22, 2026">
       <section>
         <h2>Why a separate health data notice</h2>
         <p>

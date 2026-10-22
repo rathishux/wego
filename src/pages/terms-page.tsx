@@ -7,7 +7,7 @@ interface TermsPageProps {
 
 export function TermsPage({ onNavigate }: TermsPageProps) {
   return (
-    <LegalPageLayout onNavigate={onNavigate} title="Terms & Conditions" lastUpdated="July 19, 2026">
+    <LegalPageLayout onNavigate={onNavigate} title="Terms & Conditions" lastUpdated="October 22, 2026">
       <section>
         <h2>Acceptance of terms</h2>
         <p>By using NivYou, you agree to these terms. If you don't agree, please don't use the app.</p>

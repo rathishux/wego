@@ -7,7 +7,7 @@ interface PrivacyPolicyPageProps {
 
 export function PrivacyPolicyPage({ onNavigate }: PrivacyPolicyPageProps) {
   return (
-    <LegalPageLayout onNavigate={onNavigate} title="Privacy Policy" lastUpdated="October 18, 2026">
+    <LegalPageLayout onNavigate={onNavigate} title="Privacy Policy" lastUpdated="October 22, 2026">
       <section>
         <h2>Overview</h2>
         <p>
