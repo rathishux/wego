@@ -66,3 +66,26 @@ in App content → Privacy policy. Fix was two-part:
   (`src/components/app/legal-page-layout.tsx`) and tightened the Privacy
   Policy's account-deletion section, since a published policy page
   shouldn't read as unfinished to a reviewer.
+
+## Rejection round 2 (Oct 22, 2026): "Privacy Policy is not clearly labeled"
+
+Exact rejection text: *"Your privacy policy does not include an explicit
+label identifying it as a 'Privacy policy.' Add a prominent 'Privacy Policy'
+header to the top of your document."*
+
+Root cause: the page had no heading at all — it went straight from the
+"Back" button to "Last updated" to an "Overview" section. No visible text
+anywhere said "Privacy Policy."
+
+Fix: added a `title` prop to `LegalPageLayout`, rendered as a real `<h1>` at
+the very top of the page (before "Last updated"). Applied to all three legal
+pages so none of them repeat this mistake — Privacy Policy, Terms &
+Conditions, Health Data Privacy each now have their own `<h1>` matching
+their actual name. Also set `document.title` per standalone legal route in
+`App.tsx` so the same label shows in the browser tab, not just the page
+body.
+
+**Lesson for next time**: before resubmitting after a rejection, actually
+read the rendered page like a reviewer would — check for the exact thing
+named in the rejection (a literal heading, a literal link, a literal
+section), not just "does the content cover this topic somewhere."
