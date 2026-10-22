@@ -56,6 +56,12 @@ function getStandaloneLegalRoute(): StandaloneLegalRoute | null {
   return null;
 }
 
+const STANDALONE_LEGAL_TITLES: Record<StandaloneLegalRoute, string> = {
+  privacy: "Privacy Policy — NivYou",
+  terms: "Terms & Conditions — NivYou",
+  "health-privacy": "Health Data Privacy — NivYou",
+};
+
 // Lets App Store/Play Store reviewers (and anyone else) open the privacy
 // policy, terms, or health data notice straight from a bare URL, without
 // signing in or loading the rest of the app.
@@ -63,6 +69,9 @@ function StandaloneLegalPage({ route }: { route: StandaloneLegalRoute }) {
   const goHome = () => {
     window.location.href = import.meta.env.BASE_URL;
   };
+  React.useEffect(() => {
+    document.title = STANDALONE_LEGAL_TITLES[route];
+  }, [route]);
   return (
     <div className="bg-background flex min-h-svh justify-center px-4 py-8">
       <React.Suspense fallback={PAGE_FALLBACK}>
