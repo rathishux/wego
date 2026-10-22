@@ -1,4 +1,4 @@
--- Steady: account-based cloud sync for tracking data (dose/weight/glucose/
+-- NivYou: account-based cloud sync for tracking data (dose/weight/glucose/
 -- food/progress photos/markers). Run this in the Supabase SQL editor
 -- in addition to schema.sql (which sets up the Community feature).
 --

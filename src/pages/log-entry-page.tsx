@@ -6,7 +6,9 @@ import { FoodForm } from "@/components/app/forms/food-form";
 import type { PageId } from "@/components/app/nav-items";
 import { VitalsPanel } from "@/components/app/vitals-panel";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type { LogType } from "@/lib/types";
+import { useEntries } from "@/hooks/use-entries";
+import { calculateLoggingStreak, getStreakMessage } from "@/lib/streak";
+import type { DoseEntry, FoodEntry, GlucoseEntry, LogType, WeightEntry } from "@/lib/types";
 
 type UiTab = "dose" | "vitals" | "food";
 
@@ -22,13 +24,22 @@ interface LogEntryPageProps {
 
 export function LogEntryPage({ initialTab, onNavigate }: LogEntryPageProps) {
   const [tab, setTab] = React.useState<UiTab>(toUiTab(initialTab));
+  const { list: doseList } = useEntries<DoseEntry>("dose");
+  const { list: weightList } = useEntries<WeightEntry>("weight");
+  const { list: glucoseList } = useEntries<GlucoseEntry>("glucose");
+  const { list: foodList } = useEntries<FoodEntry>("food");
 
   React.useEffect(() => {
     setTab(toUiTab(initialTab));
   }, [initialTab]);
 
-  function handleSaved() {
-    toast("Saved — view it on the Progress timeline", {
+  function handleSaved(date: string) {
+    const loggedDates = [...doseList, ...weightList, ...glucoseList, ...foodList].map((e) => e.date);
+    loggedDates.push(date);
+    const streak = calculateLoggingStreak(loggedDates);
+
+    toast.success(getStreakMessage(streak) ?? "Saved.", {
+      description: "View it on the Progress timeline",
       action: {
         label: "View progress",
         onClick: () => onNavigate("progress"),

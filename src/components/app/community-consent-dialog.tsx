@@ -27,30 +27,30 @@ export function CommunityConsentDialog({ open, onOpenChange, onAgree }: Communit
         <DialogHeader>
           <DialogTitle>Before you post publicly</DialogTitle>
           <DialogDescription>
-            This is different from the rest of Steady — everything else stays private on your device.
-            Community posts are visible to other Steady users.
+            This is different from the rest of NivYou — everything else stays private on your device.
+            Community posts are visible to other NivYou users.
           </DialogDescription>
         </DialogHeader>
 
         <div className="flex flex-col gap-3 text-sm">
           <div className="flex gap-2.5">
             <UserRoundX className="text-muted-foreground mt-0.5 size-4 shrink-0" />
-            <p>Your posts show a random pseudonym and color, never your real name or account info.</p>
+            <p className="min-w-0">Your posts show a random pseudonym and color, never your real name or account info.</p>
           </div>
           <div className="flex gap-2.5">
             <Eye className="text-muted-foreground mt-0.5 size-4 shrink-0" />
-            <p>
+            <p className="min-w-0">
               <strong>If you include a photo, your face may still be recognizable</strong>, even though
               your account is anonymous. Only share a photo you're comfortable with others seeing.
             </p>
           </div>
           <div className="flex gap-2.5">
             <ShieldCheck className="text-muted-foreground mt-0.5 size-4 shrink-0" />
-            <p>You can delete any post or comment you've made at any time.</p>
+            <p className="min-w-0">You can delete any post or comment you've made at any time.</p>
           </div>
           <div className="flex gap-2.5">
             <MessageCircleWarning className="text-muted-foreground mt-0.5 size-4 shrink-0" />
-            <p>
+            <p className="min-w-0">
               Other members can reply to your posts. Any post or comment reported for mocking or
               harassment is automatically hidden pending review.
             </p>

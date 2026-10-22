@@ -1,12 +1,11 @@
-import { Menu } from "lucide-react";
 import * as React from "react";
 
+import { AccountMenu } from "@/components/app/account-menu";
 import { AppSidebar } from "@/components/app/app-sidebar";
+import { BottomTabBar } from "@/components/app/bottom-tab-bar";
 import { NAV_ITEMS, SECONDARY_ITEMS, type PageId } from "@/components/app/nav-items";
 import { ThemeToggle } from "@/components/app/theme-toggle";
-import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
-import { VisuallyHidden } from "@/components/ui/visually-hidden";
+import { useAuth } from "@/hooks/use-auth";
 
 interface AppShellProps {
   active: PageId;
@@ -15,7 +14,7 @@ interface AppShellProps {
 }
 
 export function AppShell({ active, onNavigate, children }: AppShellProps) {
-  const [mobileOpen, setMobileOpen] = React.useState(false);
+  const { cloudEnabled, user } = useAuth();
   const activeItem =
     [...NAV_ITEMS, ...SECONDARY_ITEMS].find((item) => item.id === active) ?? NAV_ITEMS[0];
 
@@ -27,48 +26,27 @@ export function AppShell({ active, onNavigate, children }: AppShellProps) {
         </div>
       </aside>
 
-      <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
-        <SheetContent
-          side="left"
-          className="bg-sidebar text-sidebar-foreground w-72 p-0"
+      <div className="flex min-h-svh min-w-0 flex-1 flex-col">
+        <header
+          className="bg-background/80 sticky top-0 z-30 flex items-center gap-3 border-b px-4 py-3 backdrop-blur md:px-8"
+          style={{ paddingTop: "max(0.75rem, env(safe-area-inset-top))" }}
         >
-          <VisuallyHidden>
-            <SheetTitle>Navigation</SheetTitle>
-          </VisuallyHidden>
-          <AppSidebar
-            active={active}
-            onNavigate={(id) => {
-              onNavigate(id);
-              setMobileOpen(false);
-            }}
-          />
-        </SheetContent>
-      </Sheet>
-
-      <div className="flex min-h-svh flex-1 flex-col">
-        <header className="bg-background/80 sticky top-0 z-30 flex items-center gap-3 border-b px-4 py-3 backdrop-blur md:px-8">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="md:hidden"
-            aria-label="Open navigation"
-            onClick={() => setMobileOpen(true)}
-          >
-            <Menu />
-          </Button>
           <div className="min-w-0 flex-1">
             <h1 className="truncate text-lg font-semibold">{activeItem.label}</h1>
-            <p className="text-muted-foreground truncate text-sm">
-              {activeItem.description}
-            </p>
+            <p className="text-muted-foreground truncate text-sm">{activeItem.description}</p>
           </div>
           <ThemeToggle />
+          <AccountMenu user={cloudEnabled ? user : null} onNavigate={onNavigate} compact className="md:hidden" />
         </header>
 
-        <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-6 md:px-8 md:py-8">
-          {children}
+        <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-6 pb-24 md:px-8 md:py-8 md:pb-8">
+          <div key={active} className="animate-in fade-in-0 slide-in-from-bottom-2 duration-300 ease-out">
+            {children}
+          </div>
         </main>
       </div>
+
+      <BottomTabBar active={active} onNavigate={onNavigate} />
     </div>
   );
 }

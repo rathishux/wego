@@ -7,13 +7,13 @@ interface PrivacyPolicyPageProps {
 
 export function PrivacyPolicyPage({ onNavigate }: PrivacyPolicyPageProps) {
   return (
-    <LegalPageLayout onNavigate={onNavigate} lastUpdated="July 19, 2026">
+    <LegalPageLayout onNavigate={onNavigate} title="Privacy Policy" lastUpdated="October 22, 2026">
       <section>
         <h2>Overview</h2>
         <p>
-          Steady is a personal tracker for Wegovy (semaglutide) doses, weight, blood glucose, and
-          food/water logging, plus a private visual timeline ("You") and an opt-in public support feed
-          ("Community"). This policy explains what data Steady collects and how it's stored.
+          NivYou is a personal GLP-1 journey tracker: log your doses, weight, blood glucose, and food and
+          water, with a private visual timeline ("You") and an opt-in public support feed ("Community").
+          This policy explains what data NivYou collects and how it's stored.
         </p>
       </section>
 
@@ -30,7 +30,7 @@ export function PrivacyPolicyPage({ onNavigate }: PrivacyPolicyPageProps) {
       <section>
         <h2>How your data is stored</h2>
         <p>
-          By default, Steady runs in <strong>local-only mode</strong>: everything lives in your browser's
+          By default, NivYou runs in <strong>local-only mode</strong>: everything lives in your browser's
           storage on your device only, with no account and nothing sent to a server. If cloud sync is
           configured, signing in moves your tracking data into a private, per-account database (Supabase),
           protected so that only you can read or write it.
@@ -40,8 +40,8 @@ export function PrivacyPolicyPage({ onNavigate }: PrivacyPolicyPageProps) {
       <section>
         <h2>Community is the one exception</h2>
         <p>
-          Everywhere else in Steady, your data stays private. Community is different by design: posts and
-          comments you choose to share there are visible to other Steady users. Your account identity is
+          Everywhere else in NivYou, your data stays private. Community is different by design: posts and
+          comments you choose to share there are visible to other NivYou users. Your account identity is
           hidden behind a random pseudonym, but if you include a photo, your face may still be
           recognizable — anonymity protects your account, not necessarily your appearance. Sharing to
           Community always requires an explicit action and one-time consent; nothing is posted there
@@ -63,14 +63,27 @@ export function PrivacyPolicyPage({ onNavigate }: PrivacyPolicyPageProps) {
         <ul>
           <li>You can delete any entry, You post, or Community post/comment at any time</li>
           <li>You can sign out at any time</li>
-          <li>You can use Steady without ever creating an account by not configuring cloud sync</li>
+          <li>You can use NivYou without ever creating an account by not configuring cloud sync</li>
         </ul>
+      </section>
+
+      <section>
+        <h2>Delete your account and data</h2>
+        <p>
+          If you've signed in with cloud sync, you can permanently delete your NivYou account and every
+          record tied to it at any time: open NivYou, sign in, go to Settings → Account, scroll to the
+          bottom, and select "Delete my account." This removes your dose, weight, glucose, and food
+          entries, progress markers, You timeline photos, Community posts and comments, and profile
+          details immediately and completely — nothing is retained afterward. If you're using NivYou
+          without an account (local-only mode), deleting the app removes all your data, since nothing was
+          ever sent anywhere. See the Health Data Privacy notice for more detail.
+        </p>
       </section>
 
       <section>
         <h2>Not medical advice</h2>
         <p>
-          Steady only records what you enter. It never interprets your readings, offers medical advice, or
+          NivYou only records what you enter. It never interprets your readings, offers medical advice, or
           adjusts dosage recommendations. Always talk to your doctor or pharmacist about your treatment.
         </p>
       </section>
@@ -78,7 +91,7 @@ export function PrivacyPolicyPage({ onNavigate }: PrivacyPolicyPageProps) {
       <section>
         <h2>Age</h2>
         <p>
-          Steady is intended for adults managing their own prescribed treatment and is not directed at
+          NivYou is intended for adults managing their own prescribed treatment and is not directed at
           children.
         </p>
       </section>
@@ -92,7 +105,7 @@ export function PrivacyPolicyPage({ onNavigate }: PrivacyPolicyPageProps) {
 
       <section>
         <h2>Contact</h2>
-        <p>Questions about this policy? Reach out at [your contact email].</p>
+        <p>Questions about this policy? Reach out at bushchat3@gmail.com.</p>
       </section>
     </LegalPageLayout>
   );

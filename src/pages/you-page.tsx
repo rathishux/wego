@@ -1,4 +1,4 @@
-import { Plus } from "lucide-react";
+import { Camera } from "lucide-react";
 import * as React from "react";
 import { toast } from "sonner";
 
@@ -14,6 +14,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { Separator } from "@/components/ui/separator";
 import { useCommunityConsent } from "@/hooks/use-community-consent";
 import { useEntries } from "@/hooks/use-entries";
 import { communityBackend } from "@/lib/community";
@@ -69,21 +70,16 @@ export function YouPage() {
         Private by default — visible only to you unless you share it.
       </p>
 
-      <YouTimeline posts={posts} onDelete={remove} onShare={handleShareClick} sharing={sharing} />
-
       <Dialog open={composerOpen} onOpenChange={setComposerOpen}>
         <DialogTrigger asChild>
-          <Button
-            size="icon"
-            className="fixed right-6 bottom-6 z-40 size-14 rounded-full shadow-lg"
-            aria-label="New entry"
-          >
-            <Plus className="size-6" />
+          <Button className="w-full gap-2">
+            <Camera className="size-4" />
+            Add your recent photo
           </Button>
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>New entry</DialogTitle>
+            <DialogTitle>Add your recent photo</DialogTitle>
             <DialogDescription>
               Private by default — visible only to you unless you share it.
             </DialogDescription>
@@ -91,6 +87,10 @@ export function YouPage() {
           <YouPostForm onAdd={handleAdd} />
         </DialogContent>
       </Dialog>
+
+      <Separator />
+
+      <YouTimeline posts={posts} onDelete={remove} onShare={handleShareClick} sharing={sharing} />
 
       <CommunityConsentDialog
         open={consentOpen}

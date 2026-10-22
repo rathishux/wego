@@ -3,7 +3,7 @@ import * as React from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { getSupabase } from "@/lib/supabase";
 
-type EntryTableType = "dose" | "weight" | "glucose" | "food" | "progress_photo" | "you_post";
+type EntryTableType = "dose" | "weight" | "glucose" | "food" | "marker" | "progress_photo" | "you_post";
 
 interface CloudListResult<T> {
   list: T[];

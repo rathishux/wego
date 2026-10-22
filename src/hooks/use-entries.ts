@@ -8,6 +8,7 @@ const LOCAL_KEY_BY_TYPE = {
   weight: KEYS.weights,
   glucose: KEYS.glucose,
   food: KEYS.food,
+  marker: KEYS.markerEntries,
   progress_photo: KEYS.progressPhotos,
   you_post: KEYS.youPosts,
 } as const;

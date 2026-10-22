@@ -6,8 +6,13 @@ export const KEYS = {
   glucose: STORAGE_PREFIX + "glucose",
   food: STORAGE_PREFIX + "food",
   markers: STORAGE_PREFIX + "markers",
+  markerEntries: STORAGE_PREFIX + "markerEntries",
+  profile: STORAGE_PREFIX + "profile",
+  notificationPrefs: STORAGE_PREFIX + "notificationPrefs",
   progressPhotos: STORAGE_PREFIX + "progressPhotos",
   youPosts: STORAGE_PREFIX + "youPosts",
+  onboardingComplete: STORAGE_PREFIX + "onboardingComplete",
+  legalAccepted: STORAGE_PREFIX + "legalAccepted",
 } as const;
 
 const LEGACY_FACE_PHOTO_KEY = STORAGE_PREFIX + "markers.face";
@@ -20,6 +25,27 @@ export function migrateLegacyFacePhoto(): void {
     saveList(KEYS.progressPhotos, [{ id: uid(), createdAt: Date.now(), photo: legacy }]);
   }
   localStorage.removeItem(LEGACY_FACE_PHOTO_KEY);
+}
+
+export function migrateLegacyMarkers(): void {
+  const legacy = loadValue<{ waist: string; sleep: string; mood: string } | null>(KEYS.markers, null);
+  if (!legacy) return;
+  const existing = loadList<{ id: string }>(KEYS.markerEntries);
+  if (existing.length === 0 && (legacy.waist || legacy.sleep || legacy.mood)) {
+    const waist = parseFloat(legacy.waist);
+    const sleep = parseFloat(legacy.sleep);
+    saveList(KEYS.markerEntries, [
+      {
+        id: uid(),
+        createdAt: Date.now(),
+        date: todayISO(),
+        waist: Number.isNaN(waist) ? undefined : waist,
+        sleep: Number.isNaN(sleep) ? undefined : sleep,
+        mood: legacy.mood.trim() || undefined,
+      },
+    ]);
+  }
+  localStorage.removeItem(KEYS.markers);
 }
 
 export function loadList<T>(key: string): T[] {

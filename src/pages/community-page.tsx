@@ -1,4 +1,4 @@
-import { Info, Plus } from "lucide-react";
+import { Info, PenLine } from "lucide-react";
 import * as React from "react";
 import { toast } from "sonner";
 
@@ -15,6 +15,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { Separator } from "@/components/ui/separator";
 import { useCommunityConsent } from "@/hooks/use-community-consent";
 import { communityBackend, isSupabaseConfigured, type CommunityPost, type CreatePostInput, type ReportReason } from "@/lib/community";
 
@@ -103,7 +104,7 @@ export function CommunityPage() {
         <Card className="border-warning/40 bg-warning/10">
           <CardContent className="flex items-start gap-2.5 py-4 text-sm">
             <Info className="text-warning mt-0.5 size-4 shrink-0" />
-            <p>
+            <p className="min-w-0">
               <strong>Demo mode.</strong> No community backend is configured yet, so posts here are only
               visible on this device — they aren't actually shared with other users. See the README for how
               to connect a real backend.
@@ -112,33 +113,11 @@ export function CommunityPage() {
         </Card>
       )}
 
-      {loading ? (
-        <p className="text-muted-foreground text-sm">Loading community posts…</p>
-      ) : loadError ? (
-        <p className="text-destructive text-sm">Couldn't load the community feed: {loadError}</p>
-      ) : posts.length === 0 ? (
-        <p className="text-muted-foreground text-sm">
-          No posts yet. Tap "New post" to be the first to share how it's going.
-        </p>
-      ) : (
-        <div className="flex flex-col gap-4">
-          {posts.map((post) => (
-            <CommunityPostCard
-              key={post.id}
-              post={post}
-              onToggleReaction={handleToggleReaction}
-              onDelete={handleDelete}
-              onReport={handleReport}
-              onCommentCountChange={handleCommentCountChange}
-            />
-          ))}
-        </div>
-      )}
-
       <Dialog open={composerOpen} onOpenChange={setComposerOpen}>
         <DialogTrigger asChild>
-          <Button size="icon" className="fixed right-6 bottom-6 z-40 size-14 rounded-full shadow-lg" aria-label="New post">
-            <Plus className="size-6" />
+          <Button className="w-full gap-2">
+            <PenLine className="size-4" />
+            Create post
           </Button>
         </DialogTrigger>
         <DialogContent>
@@ -155,6 +134,31 @@ export function CommunityPage() {
           />
         </DialogContent>
       </Dialog>
+
+      <Separator />
+
+      {loading ? (
+        <p className="text-muted-foreground text-sm">Loading community posts…</p>
+      ) : loadError ? (
+        <p className="text-destructive text-sm">Couldn't load the community feed: {loadError}</p>
+      ) : posts.length === 0 ? (
+        <p className="text-muted-foreground text-sm">
+          No posts yet. Tap "Create post" to be the first to share how it's going.
+        </p>
+      ) : (
+        <div className="flex flex-col gap-4">
+          {posts.map((post) => (
+            <CommunityPostCard
+              key={post.id}
+              post={post}
+              onToggleReaction={handleToggleReaction}
+              onDelete={handleDelete}
+              onReport={handleReport}
+              onCommentCountChange={handleCommentCountChange}
+            />
+          ))}
+        </div>
+      )}
 
       <CommunityConsentDialog
         open={consentOpen}

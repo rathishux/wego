@@ -1,4 +1,4 @@
--- Steady: v2 schema changes
+-- NivYou: v2 schema changes
 -- Run this once, in addition to schema.sql and schema_accounts.sql.
 -- Covers: the new private "You" timeline, optional photos on Community
 -- posts (text-only posts), and Community comments.
